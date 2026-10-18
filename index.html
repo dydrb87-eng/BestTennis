@@ -212,38 +212,44 @@
     .action-btn-group { display: flex; gap: 10px; align-items: center; flex-wrap: nowrap; }
     .round-info-badge { background: rgba(255, 255, 0, 0.15); border: 1.5px solid rgba(255, 255, 0, 0.5); color: var(--vivid-yellow); padding: 8px 18px; border-radius: 25px; font-size: 1.15rem; font-weight: 800; }
 
-    /* 2. 사전 설정: 2열 레이아웃 (좌: 참석자 현황, 우: 불참자 목록) */
-    .pre-setup-layout {
-      display: flex;
-      gap: 24px;
-      align-items: stretch;
+    /* 2. 사전 설정: 가로 3분할 레이아웃 (남성 2/3, 여성 1/3) */
+    .ratio-gender-columns {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
       width: 100%;
     }
-    .pre-setup-left {
-      flex: 1.25;
+    .ratio-male-column {
       min-width: 0;
-      background: rgba(0, 0, 0, 0.22);
+      background: rgba(0, 0, 0, 0.25);
       border: 1.5px solid var(--border-color);
       border-radius: var(--radius-md);
       padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
-    .pre-setup-right {
-      flex: 0.95;
+    .ratio-female-column {
       min-width: 0;
-      background: rgba(255, 59, 59, 0.06);
-      border: 1.5px solid rgba(255, 59, 59, 0.35);
+      background: rgba(236, 72, 153, 0.06);
+      border: 1.5px solid rgba(236, 72, 153, 0.35);
       border-radius: var(--radius-md);
       padding: 16px 18px;
       display: flex;
       flex-direction: column;
+      gap: 12px;
     }
-    .absent-list-grid {
+    .participant-grid-2col {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 10px;
+      width: 100%;
+    }
+    .participant-grid-1col {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      max-height: 290px;
-      overflow-y: auto;
-      padding-right: 4px;
+      gap: 10px;
+      width: 100%;
     }
     .empty-absent-notice {
       display: flex;
@@ -256,14 +262,12 @@
       font-size: 1.05rem;
       font-weight: 600;
       text-align: center;
-      height: 100%;
+      width: 100%;
     }
 
-    .participant-gender-columns { display: flex; gap: 14px; }
-    .gender-column { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; max-height: 290px; overflow-y: auto; padding-right: 4px; }
-    .gender-column-title { font-size: 1.05rem; font-weight: 800; padding-bottom: 6px; border-bottom: 1.5px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--bg-card); z-index: 1; }
+    .gender-column-title { font-size: 1.1rem; font-weight: 800; padding-bottom: 8px; border-bottom: 1.5px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
 
-    .participant-v-item { background: rgba(0, 0, 0, 0.35); border: 1.5px solid var(--border-color); padding: 6px 10px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 1.05rem; white-space: nowrap; flex-wrap: nowrap; overflow: hidden; }
+    .participant-v-item { background: rgba(0, 0, 0, 0.35); border: 1.5px solid var(--border-color); padding: 8px 12px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 1.05rem; white-space: nowrap; flex-wrap: nowrap; overflow: hidden; }
     .participant-v-item.absent-item { opacity: 0.85; background: rgba(255, 59, 59, 0.12); border-color: rgba(255, 59, 59, 0.4); }
     .participant-v-item .name-box { display: flex; align-items: center; gap: 6px; font-weight: 700; white-space: nowrap; flex-shrink: 0; min-width: 0; }
     .participant-v-item .name-text { white-space: nowrap; }
@@ -273,9 +277,9 @@
     .btn-restore-toggle { width: 24px; height: 24px; border-radius: 50%; border: none; background: rgba(0, 176, 39, 0.25); color: #82e38c; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 0.9rem; }
     .btn-restore-toggle:hover { background: var(--vivid-green); color: white; transform: scale(1.15); }
 
-    .participant-v-item .count-tag { background: rgba(255, 255, 0, 0.2); color: var(--vivid-yellow); border: 1px solid rgba(255, 255, 0, 0.4); font-weight: 800; font-size: 0.92rem; padding: 2px 6px; border-radius: 14px; white-space: nowrap; flex-shrink: 0; }
+    .participant-v-item .count-tag { background: rgba(255, 255, 0, 0.2); color: var(--vivid-yellow); border: 1px solid rgba(255, 255, 0, 0.4); font-weight: 800; font-size: 0.92rem; padding: 3px 8px; border-radius: 14px; white-space: nowrap; flex-shrink: 0; }
     .late-bonus-badge { color: rgba(255, 255, 255, 0.85); font-size: 0.82rem; font-weight: 700; margin-left: 2px; margin-right: 2px; }
-    .btn-adjust-count { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border-color); background: rgba(255, 255, 255, 0.12); color: #ffffff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.8rem; font-weight: 800; line-height: 1; margin-left: 2px; transition: var(--transition); user-select: none; flex-shrink: 0; }
+    .btn-adjust-count { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--border-color); background: rgba(255, 255, 255, 0.12); color: #ffffff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.85rem; font-weight: 800; line-height: 1; margin-left: 2px; transition: var(--transition); user-select: none; flex-shrink: 0; }
     .btn-adjust-count:hover { background: var(--vivid-green); color: #ffffff; border-color: var(--vivid-green); transform: scale(1.15); }
     .absent-section { margin-top: 18px; padding-top: 16px; border-top: 2px dashed var(--border-color); }
     .absent-section-title { font-size: 1.05rem; font-weight: 800; color: var(--danger); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
@@ -695,8 +699,9 @@
       .btn-group .btn-lg { grid-column: span 2; }
 
       /* Tab 2 Game Matching Controls */
-      .pre-setup-layout { flex-direction: column !important; gap: 14px !important; }
-      .pre-setup-left, .pre-setup-right { width: 100% !important; padding: 12px 10px !important; }
+      .ratio-gender-columns { grid-template-columns: 1fr !important; gap: 14px !important; }
+      .ratio-male-column, .ratio-female-column { width: 100% !important; padding: 12px 10px !important; }
+      .participant-grid-2col { grid-template-columns: 1fr !important; }
       
       .match-controls-bar { padding: 14px 10px; flex-direction: column; align-items: stretch; gap: 12px; width: 100%; box-sizing: border-box; }
       .mode-selector { flex-direction: column; align-items: stretch; gap: 6px; width: 100%; }
@@ -708,20 +713,18 @@
       .member-change-toggle-container { width: 100%; justify-content: space-between; box-sizing: border-box; padding: 6px 10px; margin-top: 4px; }
       .toggle-label { font-size: 0.95rem; }
 
-      .participant-gender-columns { flex-direction: row !important; gap: 6px; width: 100%; box-sizing: border-box; }
-      .gender-column { flex: 1; min-width: 0; box-sizing: border-box; }
-      .gender-column-title { font-size: 0.9rem; }
+      .gender-column-title { font-size: 0.95rem; }
 
       .participant-v-item {
-        padding: 5px 6px;
-        font-size: 0.88rem;
-        gap: 3px;
+        padding: 6px 8px;
+        font-size: 0.9rem;
+        gap: 4px;
         box-sizing: border-box;
       }
-      .participant-v-item .name-box { gap: 3px; }
-      .btn-absent-toggle, .btn-restore-toggle { width: 20px; height: 20px; font-size: 0.8rem; }
-      .participant-v-item .count-tag { padding: 2px 5px; font-size: 0.8rem; }
-      .btn-replace-target { padding: 2px 5px; font-size: 0.8rem; }
+      .participant-v-item .name-box { gap: 4px; }
+      .btn-absent-toggle, .btn-restore-toggle { width: 22px; height: 22px; font-size: 0.85rem; }
+      .participant-v-item .count-tag { padding: 2px 6px; font-size: 0.82rem; }
+      .btn-replace-target { padding: 3px 6px; font-size: 0.82rem; }
 
       /* Mobile Match Cards (100% 고정, 좌우 스크롤 차단) */
       .matches-single-column-list { gap: 14px; width: 100%; box-sizing: border-box; }
@@ -906,9 +909,14 @@
         </div>
       </div>
 
-      <!-- 2. 사전 설정: [참여 경기 수 현황] (좌) & [불참자 목록] (우) 상단 2열 배치 -->
-      <div class="glass-panel pre-setup-panel" style="padding: 22px 24px; margin-bottom: 20px;">
+      <!-- 2. 사전 설정 1단계: [참여 경기 수 현황 (참석자)] 가로 3분할 (남성 2/3, 여성 1/3) -->
+      <div class="glass-panel" style="padding: 20px 24px; margin-bottom: 20px;">
         <div id="participantMatchCountsList"></div>
+      </div>
+
+      <!-- 2. 사전 설정 2단계: [불참자 목록] 가로 3분할 (남성 2/3, 여성 1/3) -->
+      <div class="glass-panel" style="padding: 20px 24px; margin-bottom: 20px;">
+        <div id="absentPlayersListContainer"></div>
       </div>
 
       <!-- 3. 경기 방식 & 매칭 생성 컨트롤 바 (한 줄 배치) -->
@@ -1988,42 +1996,74 @@
           `;
         };
 
+        // 1. 참석자 참여 경기 수 현황 렌더링
         container.innerHTML = `
           ${activeBannerHtml}
-          <div class="pre-setup-layout">
-            <div class="pre-setup-left">
-              <div class="panel-header" style="margin-bottom: 12px;">
-                <h3 class="sub-panel-title"><i class="ph ph-user-list"></i> 참여 경기 수 현황 (참석자)</h3>
+          <div class="panel-header" style="margin-bottom: 14px;">
+            <h3 class="sub-panel-title"><i class="ph ph-user-list"></i> 참여 경기 수 현황 (참석자: ${attending.length}명)</h3>
+          </div>
+          <div class="ratio-gender-columns">
+            <div class="ratio-male-column">
+              <div class="gender-column-title">
+                <span><i class="ph ph-gender-male"></i> 남성 참석자</span>
+                <span style="color: var(--vivid-yellow); font-size:1.1rem; font-weight:900;">${attendingMales.length}명</span>
               </div>
-              <div class="participant-gender-columns">
-                <div class="gender-column">
-                  <div class="gender-column-title"><span><i class="ph ph-gender-male"></i> 남성 참석자</span><span style="color: var(--vivid-yellow); font-size:1.05rem;">${attendingMales.length}명</span></div>
-                  ${attendingMales.length > 0 ? attendingMales.map(p => renderItem(p, false)).join('') : '<div style="font-size:1rem; color:var(--text-muted); padding:6px 0;">없음</div>'}
-                </div>
-                <div class="gender-column">
-                  <div class="gender-column-title"><span><i class="ph ph-gender-female"></i> 여성 참석자</span><span style="color: var(--accent-pink); font-size:1.05rem;">${attendingFemales.length}명</span></div>
-                  ${attendingFemales.length > 0 ? attendingFemales.map(p => renderItem(p, false)).join('') : '<div style="font-size:1rem; color:var(--text-muted); padding:6px 0;">없음</div>'}
-                </div>
+              <div class="participant-grid-2col">
+                ${attendingMales.length > 0 ? attendingMales.map(p => renderItem(p, false)).join('') : '<div style="font-size:1rem; color:var(--text-muted); padding:6px 0;">남성 참석자 없음</div>'}
               </div>
             </div>
-            <div class="pre-setup-right">
-              <div class="panel-header" style="margin-bottom: 12px;">
-                <h3 class="sub-panel-title" style="color: var(--danger);"><i class="ph ph-user-minus"></i> 불참자 목록</h3>
-                <span class="count-tag" style="background:rgba(255,59,59,0.2); color:#ff9999; border-color:rgba(255,59,59,0.4);">${absent.length}명</span>
+            <div class="ratio-female-column">
+              <div class="gender-column-title">
+                <span><i class="ph ph-gender-female"></i> 여성 참석자</span>
+                <span style="color: var(--accent-pink); font-size:1.1rem; font-weight:900;">${attendingFemales.length}명</span>
               </div>
-              ${absent.length > 0 ? `
-                <div class="absent-list-grid">
-                  ${absent.map(p => renderItem(p, true)).join('')}
-                </div>
-              ` : `
-                <div class="empty-absent-notice">
-                  <i class="ph ph-check-circle" style="font-size: 1.8rem; color: var(--vivid-green);"></i>
-                  <span>현재 불참자로 지정된 선수가 없습니다.</span>
-                </div>
-              `}
+              <div class="participant-grid-1col">
+                ${attendingFemales.length > 0 ? attendingFemales.map(p => renderItem(p, false)).join('') : '<div style="font-size:1rem; color:var(--text-muted); padding:6px 0;">여성 참석자 없음</div>'}
+              </div>
             </div>
           </div>
         `;
+
+        // 2. 불참자 목록 렌더링 (가로 기준 2/3 남성, 1/3 여성 분할)
+        const absentContainer = document.getElementById('absentPlayersListContainer');
+        if (absentContainer) {
+          const absentMales = absent.filter(p => p.gender === 'M');
+          const absentFemales = absent.filter(p => p.gender === 'F');
+
+          absentContainer.innerHTML = `
+            <div class="panel-header" style="margin-bottom: 14px;">
+              <h3 class="sub-panel-title" style="color: var(--danger);"><i class="ph ph-user-minus"></i> 불참자 목록 (총 ${absent.length}명)</h3>
+              <span class="count-tag" style="background:rgba(255,59,59,0.2); color:#ff9999; border-color:rgba(255,59,59,0.4); font-size:1rem;">${absent.length}명 불참</span>
+            </div>
+            ${absent.length > 0 ? `
+              <div class="ratio-gender-columns">
+                <div class="ratio-male-column">
+                  <div class="gender-column-title" style="border-color: rgba(255,59,59,0.4);">
+                    <span style="color:#ff9999;"><i class="ph ph-gender-male"></i> 남성 불참자</span>
+                    <span style="color: var(--vivid-yellow); font-size:1.05rem;">${absentMales.length}명</span>
+                  </div>
+                  <div class="participant-grid-2col">
+                    ${absentMales.length > 0 ? absentMales.map(p => renderItem(p, true)).join('') : '<div style="font-size:1rem; color:var(--text-muted); padding:6px 0;">남성 불참자 없음</div>'}
+                  </div>
+                </div>
+                <div class="ratio-female-column">
+                  <div class="gender-column-title" style="border-color: rgba(255,59,59,0.4);">
+                    <span style="color:#ff9999;"><i class="ph ph-gender-female"></i> 여성 불참자</span>
+                    <span style="color: var(--accent-pink); font-size:1.05rem;">${absentFemales.length}명</span>
+                  </div>
+                  <div class="participant-grid-1col">
+                    ${absentFemales.length > 0 ? absentFemales.map(p => renderItem(p, true)).join('') : '<div style="font-size:1rem; color:var(--text-muted); padding:6px 0;">여성 불참자 없음</div>'}
+                  </div>
+                </div>
+              </div>
+            ` : `
+              <div class="empty-absent-notice" style="padding: 20px 10px;">
+                <i class="ph ph-check-circle" style="font-size: 2rem; color: var(--vivid-green);"></i>
+                <span style="font-size: 1.1rem; color: var(--text-main); font-weight:700;">현재 불참자로 등록된 회원이 없습니다. (모든 회원 참석 중)</span>
+              </div>
+            `}
+          `;
+        }
       },
       render() {
         this.renderMonthPills();
