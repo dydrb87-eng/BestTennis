@@ -191,25 +191,81 @@
     .month-pill-delete-x { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: #ff4d4d; color: white; font-size: 0.85rem; font-weight: 900; margin-left: 4px; transition: var(--transition); }
     .month-pill-delete-x:hover { background: #ff0000; transform: scale(1.2); }
 
-    .match-controls-bar { display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; background: var(--bg-secondary); padding: 24px; border-radius: var(--radius-md); border: 2px solid var(--border-color); margin-bottom: 28px; }
-    .mode-selector { display: flex; gap: 14px; align-items: center; }
-    .radio-card-group { display: flex; gap: 12px; }
+    .match-controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: nowrap;
+      width: 100%;
+    }
+    .mode-selector {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .radio-card-group { display: flex; gap: 10px; }
     .radio-card input { position: absolute; opacity: 0; cursor: pointer; }
-    .radio-card label { display: flex; align-items: center; gap: 10px; padding: 12px 22px; background: rgba(255, 255, 255, 0.06); border: 1.5px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: var(--transition); font-weight: 700; font-size: 1.15rem; }
+    .radio-card label { display: flex; align-items: center; gap: 8px; padding: 10px 18px; background: rgba(255, 255, 255, 0.06); border: 1.5px solid var(--border-color); border-radius: var(--radius-sm); cursor: pointer; transition: var(--transition); font-weight: 700; font-size: 1.05rem; white-space: nowrap; }
     .radio-card input:checked + label { background: rgba(0, 176, 39, 0.3); border-color: var(--vivid-green); color: var(--vivid-yellow); }
+    .action-btn-group { display: flex; gap: 10px; align-items: center; flex-wrap: nowrap; }
     .round-info-badge { background: rgba(255, 255, 0, 0.15); border: 1.5px solid rgba(255, 255, 0, 0.5); color: var(--vivid-yellow); padding: 8px 18px; border-radius: 25px; font-size: 1.15rem; font-weight: 800; }
 
-    .matching-split-container { display: flex; gap: 28px; align-items: flex-start; }
-    .left-participant-panel { width: 580px; flex-shrink: 0; background: var(--bg-secondary); border: 2px solid var(--border-color); border-radius: var(--radius-md); padding: 20px 18px; }
-    .right-matches-panel { flex: 1; min-width: 0; }
+    /* 2. 사전 설정: 2열 레이아웃 (좌: 참석자 현황, 우: 불참자 목록) */
+    .pre-setup-layout {
+      display: flex;
+      gap: 24px;
+      align-items: stretch;
+      width: 100%;
+    }
+    .pre-setup-left {
+      flex: 1.25;
+      min-width: 0;
+      background: rgba(0, 0, 0, 0.22);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+    }
+    .pre-setup-right {
+      flex: 0.95;
+      min-width: 0;
+      background: rgba(255, 59, 59, 0.06);
+      border: 1.5px solid rgba(255, 59, 59, 0.35);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+    }
+    .absent-list-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 290px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .empty-absent-notice {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 30px 16px;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      font-weight: 600;
+      text-align: center;
+      height: 100%;
+    }
 
-    .participant-gender-columns { display: flex; gap: 14px; margin-bottom: 20px; }
-    .gender-column { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-    .gender-column-title { font-size: 1.1rem; font-weight: 800; padding-bottom: 8px; border-bottom: 1.5px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+    .participant-gender-columns { display: flex; gap: 14px; }
+    .gender-column { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; max-height: 290px; overflow-y: auto; padding-right: 4px; }
+    .gender-column-title { font-size: 1.05rem; font-weight: 800; padding-bottom: 6px; border-bottom: 1.5px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--bg-card); z-index: 1; }
 
-    .participant-v-item { background: rgba(0, 0, 0, 0.3); border: 1.5px solid var(--border-color); padding: 6px 8px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center; gap: 4px; font-size: 1.05rem; white-space: nowrap; flex-wrap: nowrap; overflow: hidden; }
-    .participant-v-item.absent-item { opacity: 0.6; background: rgba(255, 59, 59, 0.1); border-color: rgba(255, 59, 59, 0.3); }
-    .participant-v-item .name-box { display: flex; align-items: center; gap: 4px; font-weight: 700; white-space: nowrap; flex-shrink: 0; min-width: 0; }
+    .participant-v-item { background: rgba(0, 0, 0, 0.35); border: 1.5px solid var(--border-color); padding: 6px 10px; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 1.05rem; white-space: nowrap; flex-wrap: nowrap; overflow: hidden; }
+    .participant-v-item.absent-item { opacity: 0.85; background: rgba(255, 59, 59, 0.12); border-color: rgba(255, 59, 59, 0.4); }
+    .participant-v-item .name-box { display: flex; align-items: center; gap: 6px; font-weight: 700; white-space: nowrap; flex-shrink: 0; min-width: 0; }
     .participant-v-item .name-text { white-space: nowrap; }
 
     .btn-absent-toggle { width: 24px; height: 24px; border-radius: 50%; border: none; background: rgba(255, 59, 59, 0.25); color: #ff9999; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 0.9rem; }
@@ -239,10 +295,24 @@
 
     /* Center-aligned Scaled Up Team Boxes (1.5x) */
     .teams-container { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-    .team-box { flex: 1; background: rgba(0, 0, 0, 0.35); padding: 18px 16px; border-radius: var(--radius-sm); border: 1.5px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center; }
+    .team-box { flex: 1; background: rgba(0, 0, 0, 0.35); padding: 16px 14px; border-radius: var(--radius-sm); border: 1.5px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center; }
     .team-box.winner { border-color: var(--vivid-yellow); background: rgba(255, 255, 0, 0.15); box-shadow: 0 0 15px rgba(255, 255, 0, 0.2); }
     .team-name { font-size: 1.05rem; text-transform: uppercase; color: var(--text-muted); font-weight: 800; display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; text-align: center; }
-    .team-players { font-size: 1.35rem; font-weight: 700; color: white; display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; width: 100%; text-align: center; }
+    
+    /* 한 줄에 두 선수의 이름이 나란히 배치되도록 가로 정렬 (row) */
+    .team-players {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: white;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      text-align: center;
+    }
     .player-item {
       display: inline-flex;
       align-items: center;
@@ -250,9 +320,10 @@
       gap: 6px;
       white-space: nowrap;
       text-align: center;
-      padding: 4px 8px;
+      padding: 6px 12px;
       border-radius: 8px;
-      border: 1.5px solid transparent;
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.25);
       box-sizing: border-box;
       transition: var(--transition);
     }
@@ -624,16 +695,19 @@
       .btn-group .btn-lg { grid-column: span 2; }
 
       /* Tab 2 Game Matching Controls */
-      .match-controls-bar { padding: 14px 10px; flex-direction: column; align-items: stretch; gap: 14px; width: 100%; box-sizing: border-box; }
+      .pre-setup-layout { flex-direction: column !important; gap: 14px !important; }
+      .pre-setup-left, .pre-setup-right { width: 100% !important; padding: 12px 10px !important; }
+      
+      .match-controls-bar { padding: 14px 10px; flex-direction: column; align-items: stretch; gap: 12px; width: 100%; box-sizing: border-box; }
       .mode-selector { flex-direction: column; align-items: stretch; gap: 6px; width: 100%; }
       .radio-card-group { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; box-sizing: border-box; }
       .radio-card label { justify-content: center; padding: 8px; font-size: 0.95rem; }
+      .action-btn-group { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+      .action-btn-group button:last-child { grid-column: span 2; }
 
       .member-change-toggle-container { width: 100%; justify-content: space-between; box-sizing: border-box; padding: 6px 10px; margin-top: 4px; }
       .toggle-label { font-size: 0.95rem; }
 
-      /* Mobile Participant List Panel */
-      .left-participant-panel { padding: 12px 8px; width: 100%; box-sizing: border-box; overflow-x: hidden; }
       .participant-gender-columns { flex-direction: row !important; gap: 6px; width: 100%; box-sizing: border-box; }
       .gender-column { flex: 1; min-width: 0; box-sizing: border-box; }
       .gender-column-title { font-size: 0.9rem; }
@@ -650,7 +724,6 @@
       .btn-replace-target { padding: 2px 5px; font-size: 0.8rem; }
 
       /* Mobile Match Cards (100% 고정, 좌우 스크롤 차단) */
-      .right-matches-panel { width: 100%; box-sizing: border-box; overflow-x: hidden; }
       .matches-single-column-list { gap: 14px; width: 100%; box-sizing: border-box; }
       .match-card { padding: 14px 10px; gap: 10px; width: 100%; max-width: 100%; box-sizing: border-box; overflow-x: hidden; }
       .match-card-header { padding-bottom: 8px; flex-wrap: wrap; gap: 6px; width: 100%; justify-content: space-between; box-sizing: border-box; }
@@ -658,11 +731,11 @@
       .game-type-badge { font-size: 0.9rem; padding: 2px 6px; }
       .match-card-actions { gap: 6px; flex-shrink: 0; }
 
-      .teams-container { gap: 4px; width: 100%; box-sizing: border-box; overflow-x: hidden; }
-      .team-box { padding: 10px 4px; gap: 4px; flex: 1; min-width: 0; box-sizing: border-box; overflow: hidden; }
+      .teams-container { gap: 6px; width: 100%; box-sizing: border-box; overflow-x: hidden; }
+      .team-box { padding: 10px 6px; gap: 6px; flex: 1; min-width: 0; box-sizing: border-box; overflow: hidden; }
       .team-name { font-size: 0.88rem; white-space: nowrap; }
-      .team-players { font-size: 1.05rem; gap: 4px; width: 100%; overflow: hidden; }
-      .player-item { max-width: 100%; font-size: 0.95rem; gap: 3px; padding: 2px 4px; }
+      .team-players { font-size: 0.95rem; gap: 6px; width: 100%; overflow: hidden; flex-direction: row !important; }
+      .player-item { max-width: 100%; font-size: 0.85rem; gap: 3px; padding: 4px 6px; }
       .player-item span { white-space: nowrap; flex-shrink: 0; }
       .vs-badge { font-size: 1.1rem; flex-shrink: 0; }
 
@@ -814,7 +887,8 @@
 
     <!-- TAB 2: Game Matching -->
     <section id="tab-matching" class="tab-pane active">
-      <div class="glass-panel" style="padding: 20px 28px; margin-bottom: 24px;">
+      <!-- 1. 월례대회 선택 바 -->
+      <div class="glass-panel" style="padding: 18px 24px; margin-bottom: 20px;">
         <div class="panel-header" style="margin-bottom: 0;">
           <div class="month-sub-nav">
             <span style="font-weight: 800; color: var(--vivid-yellow); font-size: 1.2rem; margin-right: 8px;">
@@ -832,57 +906,56 @@
         </div>
       </div>
 
-      <div class="glass-panel">
+      <!-- 2. 사전 설정: [참여 경기 수 현황] (좌) & [불참자 목록] (우) 상단 2열 배치 -->
+      <div class="glass-panel pre-setup-panel" style="padding: 22px 24px; margin-bottom: 20px;">
+        <div id="participantMatchCountsList"></div>
+      </div>
+
+      <!-- 3. 경기 방식 & 매칭 생성 컨트롤 바 (한 줄 배치) -->
+      <div class="glass-panel" style="padding: 18px 24px; margin-bottom: 20px;">
         <div class="match-controls-bar">
           <div class="mode-selector">
-            <span style="font-weight: 800; color: var(--text-muted); font-size: 1.15rem;">경기 방식:</span>
+            <span style="font-weight: 800; color: var(--vivid-yellow); font-size: 1.15rem; white-space: nowrap;">
+              <i class="ph ph-sliders-horizontal"></i> 경기 방식:
+            </span>
             <div class="radio-card-group">
               <div class="radio-card">
                 <input type="radio" id="modeRegular" name="matchMode" value="regular" checked>
-                <label for="modeRegular"><i class="ph ph-users-four"></i> 일반복식(남복,여복)</label>
+                <label for="modeRegular"><i class="ph ph-users-four"></i> 일반복식(남복/여복)</label>
               </div>
               <div class="radio-card">
                 <input type="radio" id="modeMixed" name="matchMode" value="mixed">
-                <label for="modeMixed"><i class="ph ph-gender-intersex"></i> 혼합 복식 (남1+여1)</label>
+                <label for="modeMixed"><i class="ph ph-gender-intersex"></i> 혼합복식(남1+여1)</label>
               </div>
             </div>
           </div>
 
-          <div class="btn-group">
-            <button id="generateSetMatchBtn" class="btn btn-yellow btn-lg locked-btn">
-              <i class="ph ph-users-four"></i> 🎾 1세트(전체) 매칭 생성
+          <div class="btn-group action-btn-group">
+            <button id="generateSetMatchBtn" class="btn btn-yellow locked-btn" style="padding: 12px 20px; font-size: 1.05rem;">
+              <i class="ph ph-users-four"></i> 🎾 1세트(전체) 생성
             </button>
-            <button id="generateSingleMatchBtn" class="btn btn-accent btn-lg locked-btn">
-              <i class="ph ph-lightning"></i> ⚡ 1GAME(1경기) 생성
+            <button id="generateSingleMatchBtn" class="btn btn-accent locked-btn" style="padding: 12px 20px; font-size: 1.05rem;">
+              <i class="ph ph-lightning"></i> ⚡ 1GAME 생성
             </button>
-            <button id="deleteAllMatchesBtn" class="btn btn-danger locked-btn">
-              <i class="ph ph-trash"></i> 전체 경기 삭제
+            <button id="deleteAllMatchesBtn" class="btn btn-danger locked-btn" style="padding: 12px 18px; font-size: 1rem;">
+              <i class="ph ph-trash"></i> 전체 삭제
             </button>
           </div>
         </div>
+      </div>
 
-        <div class="matching-split-container">
-          <div class="left-participant-panel">
-            <div class="panel-header" style="margin-bottom: 16px;">
-              <h3 class="sub-panel-title"><i class="ph ph-user-list"></i> 참여 경기 수 현황</h3>
-            </div>
-            <div id="participantMatchCountsList"></div>
-          </div>
-
-          <div class="right-matches-panel">
-            <div class="panel-header" style="margin-bottom: 16px;">
-              <h3 class="sub-panel-title"><i class="ph ph-tennis-ball"></i> 매칭 대진표 & 실시간 스코어 입력</h3>
-              <div class="member-change-toggle-container">
-                <span class="toggle-label"><i class="ph ph-arrows-left-right"></i> 개별 멤버 변경:</span>
-                <button id="memberChangeToggleBtn" class="btn-toggle-switch off" onclick="MatchingManager.toggleMemberChangeMode()">
-                  <i class="ph ph-toggle-left" style="font-size:1.2rem;"></i> OFF
-                </button>
-              </div>
-            </div>
-            <div id="matchesRoundList" class="matches-round-list"></div>
+      <!-- 4. 메인 작업 영역: 매칭 대진표 & 실시간 스코어 입력 -->
+      <div class="glass-panel" style="padding: 24px;">
+        <div class="panel-header" style="margin-bottom: 20px;">
+          <h3 class="sub-panel-title"><i class="ph ph-tennis-ball"></i> 매칭 대진표 & 실시간 스코어 입력</h3>
+          <div class="member-change-toggle-container">
+            <span class="toggle-label"><i class="ph ph-arrows-left-right"></i> 개별 멤버 변경:</span>
+            <button id="memberChangeToggleBtn" class="btn-toggle-switch off" onclick="MatchingManager.toggleMemberChangeMode()">
+              <i class="ph ph-toggle-left" style="font-size:1.2rem;"></i> OFF
+            </button>
           </div>
         </div>
-
+        <div id="matchesRoundList" class="matches-round-list"></div>
       </div>
     </section>
 
@@ -1917,22 +1990,39 @@
 
         container.innerHTML = `
           ${activeBannerHtml}
-          <div class="participant-gender-columns">
-            <div class="gender-column">
-              <div class="gender-column-title"><span><i class="ph ph-gender-male"></i> 남성 참석자</span><span style="color: var(--vivid-yellow); font-size:1.05rem;">${attendingMales.length}명</span></div>
-              ${attendingMales.length > 0 ? attendingMales.map(p => renderItem(p, false)).join('') : '<div style="font-size:1rem; color:var(--text-muted); padding:6px 0;">없음</div>'}
+          <div class="pre-setup-layout">
+            <div class="pre-setup-left">
+              <div class="panel-header" style="margin-bottom: 12px;">
+                <h3 class="sub-panel-title"><i class="ph ph-user-list"></i> 참여 경기 수 현황 (참석자)</h3>
+              </div>
+              <div class="participant-gender-columns">
+                <div class="gender-column">
+                  <div class="gender-column-title"><span><i class="ph ph-gender-male"></i> 남성 참석자</span><span style="color: var(--vivid-yellow); font-size:1.05rem;">${attendingMales.length}명</span></div>
+                  ${attendingMales.length > 0 ? attendingMales.map(p => renderItem(p, false)).join('') : '<div style="font-size:1rem; color:var(--text-muted); padding:6px 0;">없음</div>'}
+                </div>
+                <div class="gender-column">
+                  <div class="gender-column-title"><span><i class="ph ph-gender-female"></i> 여성 참석자</span><span style="color: var(--accent-pink); font-size:1.05rem;">${attendingFemales.length}명</span></div>
+                  ${attendingFemales.length > 0 ? attendingFemales.map(p => renderItem(p, false)).join('') : '<div style="font-size:1rem; color:var(--text-muted); padding:6px 0;">없음</div>'}
+                </div>
+              </div>
             </div>
-            <div class="gender-column">
-              <div class="gender-column-title"><span><i class="ph ph-gender-female"></i> 여성 참석자</span><span style="color: var(--accent-pink); font-size:1.05rem;">${attendingFemales.length}명</span></div>
-              ${attendingFemales.length > 0 ? attendingFemales.map(p => renderItem(p, false)).join('') : '<div style="font-size:1rem; color:var(--text-muted); padding:6px 0;">없음</div>'}
+            <div class="pre-setup-right">
+              <div class="panel-header" style="margin-bottom: 12px;">
+                <h3 class="sub-panel-title" style="color: var(--danger);"><i class="ph ph-user-minus"></i> 불참자 목록</h3>
+                <span class="count-tag" style="background:rgba(255,59,59,0.2); color:#ff9999; border-color:rgba(255,59,59,0.4);">${absent.length}명</span>
+              </div>
+              ${absent.length > 0 ? `
+                <div class="absent-list-grid">
+                  ${absent.map(p => renderItem(p, true)).join('')}
+                </div>
+              ` : `
+                <div class="empty-absent-notice">
+                  <i class="ph ph-check-circle" style="font-size: 1.8rem; color: var(--vivid-green);"></i>
+                  <span>현재 불참자로 지정된 선수가 없습니다.</span>
+                </div>
+              `}
             </div>
           </div>
-          ${absent.length > 0 ? `
-            <div class="absent-section">
-              <div class="absent-section-title"><i class="ph ph-user-minus"></i> 불참자 목록 (${absent.length}명)</div>
-              <div style="display: flex; flex-direction: column; gap: 8px;">${absent.map(p => renderItem(p, true)).join('')}</div>
-            </div>
-          ` : ''}
         `;
       },
       render() {
