@@ -3,7 +3,7 @@
 <div align="center">
 
 [![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub%20Pages-brightgreen?style=for-the-badge&logo=github)](https://dydrb87-eng.github.io/BestTennis/)
-[![Google Apps Script](https://img.shields.io/badge/Backend-Google%20Apps%20Script-4285F4?style=for-the-badge&logo=google)](https://script.google.com/macros/s/AKfycbxEzbBXN39gfAMB8SgtHm3Q2Dzn6iNGYLlmQSrFYRA/exec)
+[![Google Apps Script](https://img.shields.io/badge/Backend-Google%20Apps%20Script-4285F4?style=for-the-badge&logo=google)](https://script.google.com/macros/s/AKfycbw-8eLHi4Fumt_2AS45CjcjjQAAIEYiauG19KPZGWbaX97NM1zKWW0AMMPdpE2e9u-T/exec)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 **공정한 출전 기회 배분, 연속 경기 방지(휴식 보장), 파트너 중복 최소화 알고리즘이 적용된 스마트 테니스 클럽 대회 운영 웹 앱**
@@ -20,7 +20,7 @@
 | :--- | :--- | :--- |
 | **🏸 운영/수정 메인 페이지** | [**https://dydrb87-eng.github.io/BestTennis/**](https://dydrb87-eng.github.io/BestTennis/) | **비밀번호 없이 즉시 사용 가능!** 대진표 생성, 스코어 입력, 지각자 보정, 선수 교체 등 전체 관리 기능 |
 | **👀 회원용 실시간 전광판** | [**https://dydrb87-eng.github.io/BestTennis/viewer.html**](https://dydrb87-eng.github.io/BestTennis/viewer.html) | **일반 회원 열람 전용**. 실수로 데이터가 수정되지 않도록 수정 버튼이 숨겨져 있으며, **30초마다 자동 새로고침** |
-| **☁️ 구글 백엔드 API** | [**바로가기 (GAS Web App)**](https://script.google.com/macros/s/AKfycbxEzbBXN39gfAMB8SgtHm3Q2Dzn6iNGYLlmQSrFYRA/exec) | Google Apps Script REST API (클라우드 DB 영구 보존) |
+| **☁️ 구글 백엔드 API** | [**바로가기 (GAS Web App)**](https://script.google.com/macros/s/AKfycbw-8eLHi4Fumt_2AS45CjcjjQAAIEYiauG19KPZGWbaX97NM1zKWW0AMMPdpE2e9u-T/exec) | Google Apps Script REST API (클라우드 DB 영구 보존) |
 | **📦 GitHub 원격 저장소** | [**https://github.com/dydrb87-eng/BestTennis**](https://github.com/dydrb87-eng/BestTennis) | 오픈소스 소스코드 및 버전 관리 |
 
 > 💡 **별도의 저장소를 만들 필요가 없습니다!**  
