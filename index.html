@@ -818,14 +818,25 @@
         </svg>
       </div>
 
-      <div class="admin-bar">
-        <button id="adminAuthBtn" class="btn btn-secondary admin-auth-btn" onclick="AdminManager.toggleAdmin()">
-          <i class="ph ph-lock-key"></i> 🔒 관리자 인증
-        </button>
-        <button id="changeAdminPwBtn" class="btn btn-secondary btn-sm" style="display:none; padding: 6px 12px; font-size: 0.88rem; align-items: center; gap: 4px;" onclick="AdminManager.promptChangePassword()">
-          <i class="ph ph-key"></i> 🔑 비번 변경
-        </button>
-        <span id="adminStatusBadge" class="admin-status-badge">🔒 일반 회원 모드 (스코어 입력만 가능)</span>
+      <!-- Cloud Sync & Member Viewer Bar -->
+      <div class="cloud-sync-bar" style="display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.75); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 8px 16px; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span id="cloudStatusBadge" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; font-weight: 600; color: #4ade80;">
+            <i class="ph-fill ph-check-circle"></i> ☁️ 클라우드 동기화 켜짐
+          </span>
+          <span id="cloudLastSyncTime" style="font-size: 0.8rem; color: var(--text-muted);">(로컬 & 클라우드 연동)</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button class="btn btn-secondary btn-sm" style="padding: 6px 12px; font-size: 0.85rem;" onclick="App.syncFromCloud(true)" title="다른 기기에서 수정한 최신 데이터를 불러옵니다.">
+            <i class="ph ph-arrows-clockwise"></i> 🔄 최신 불러오기
+          </button>
+          <a href="viewer.html" target="_blank" class="btn btn-yellow btn-sm" style="padding: 6px 12px; font-size: 0.85rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;" title="회원들에게 공유할 읽기 전용 대진표 및 순위 페이지를 엽니다.">
+            <i class="ph ph-eye"></i> 👀 회원용 뷰어 열기
+          </a>
+          <button class="btn btn-secondary btn-sm" style="padding: 6px 12px; font-size: 0.85rem;" onclick="App.copyViewerLink()" title="회원용 뷰어 링크를 클립보드에 복사합니다.">
+            <i class="ph ph-share-network"></i> 뷰어 링크 복사
+          </button>
+        </div>
       </div>
 
       <nav class="nav-tabs" id="mainNavTabs">
@@ -851,9 +862,9 @@
           </div>
         </div>
 
-        <div class="dropzone locked-btn" id="dropzone" onclick="if(AdminManager.checkAdmin('엑셀 파일 업로드')) document.getElementById('excelFileInput').click()">
+        <div class="dropzone" id="dropzone" onclick="document.getElementById('excelFileInput').click()">
           <i class="ph ph-cloud-arrow-up dropzone-icon"></i>
-          <h2 style="font-weight: 800; font-size: 1.4rem; color: var(--vivid-yellow);">엑셀(.xlsx, .csv) 파일을 끌어다 놓거나 클릭하여 업로드하세요 (관리자 전용)</h2>
+          <h2 style="font-weight: 800; font-size: 1.4rem; color: var(--vivid-yellow);">엑셀(.xlsx, .csv) 파일을 끌어다 놓거나 클릭하여 업로드하세요</h2>
           <p style="color: var(--text-muted); font-size: 1.1rem; margin-top: 8px;">
             첫 번째 행에 '이름', '성별' 컬럼이 포함된 파일을 지원합니다.
           </p>
@@ -867,8 +878,8 @@
             <div class="stat-pill"><span class="badge-f">여성</span> <strong id="femaleParticipantsCount">0</strong>명</div>
           </div>
           <div class="btn-group">
-            <button id="addParticipantBtn" class="btn btn-yellow locked-btn"><i class="ph ph-plus-circle"></i> 행 추가</button>
-            <button id="clearParticipantsBtn" class="btn btn-danger locked-btn"><i class="ph ph-trash"></i> 전체 삭제</button>
+            <button id="addParticipantBtn" class="btn btn-yellow"><i class="ph ph-plus-circle"></i> 행 추가</button>
+            <button id="clearParticipantsBtn" class="btn btn-danger"><i class="ph ph-trash"></i> 전체 삭제</button>
           </div>
         </div>
 
@@ -898,10 +909,10 @@
               <i class="ph ph-calendar"></i> 월례대회:
             </span>
             <div id="monthPillsContainer" class="month-pills-group"></div>
-            <button id="addMonthBtn" class="btn btn-secondary locked-btn" style="padding: 8px 16px; font-size: 1rem;">
+            <button id="addMonthBtn" class="btn btn-secondary" style="padding: 8px 16px; font-size: 1rem;">
               <i class="ph ph-plus"></i> 월 추가
             </button>
-            <button id="toggleMonthDeleteModeBtn" class="btn btn-secondary locked-btn" style="padding: 8px 16px; font-size: 1rem;" onclick="MatchingManager.toggleMonthDeleteMode()">
+            <button id="toggleMonthDeleteModeBtn" class="btn btn-secondary" style="padding: 8px 16px; font-size: 1rem;" onclick="MatchingManager.toggleMonthDeleteMode()">
               <i class="ph ph-trash"></i> 월 삭제
             </button>
           </div>
@@ -939,13 +950,13 @@
           </div>
 
           <div class="btn-group action-btn-group">
-            <button id="generateSetMatchBtn" class="btn btn-yellow locked-btn" style="padding: 12px 20px; font-size: 1.05rem;">
+            <button id="generateSetMatchBtn" class="btn btn-yellow" style="padding: 12px 20px; font-size: 1.05rem;">
               <i class="ph ph-users-four"></i> 🎾 1세트(전체) 생성
             </button>
-            <button id="generateSingleMatchBtn" class="btn btn-accent locked-btn" style="padding: 12px 20px; font-size: 1.05rem;">
+            <button id="generateSingleMatchBtn" class="btn btn-accent" style="padding: 12px 20px; font-size: 1.05rem;">
               <i class="ph ph-lightning"></i> ⚡ 1GAME 생성
             </button>
-            <button id="deleteAllMatchesBtn" class="btn btn-danger locked-btn" style="padding: 12px 18px; font-size: 1rem;">
+            <button id="deleteAllMatchesBtn" class="btn btn-danger" style="padding: 12px 18px; font-size: 1rem;">
               <i class="ph ph-trash"></i> 전체 삭제
             </button>
           </div>
@@ -981,13 +992,13 @@
             <button class="btn btn-yellow" onclick="MatchExcelImporter.downloadMatchTemplate()">
               <i class="ph ph-download-simple"></i> 이전 경기 양식 다운로드
             </button>
-            <button class="btn btn-yellow locked-btn" onclick="if(AdminManager.checkAdmin('이전 경기 엑셀 업로드')) document.getElementById('importMatchExcelInput').click()">
+            <button class="btn btn-yellow" onclick="document.getElementById('importMatchExcelInput').click()">
               <i class="ph ph-file-arrow-up"></i> 이전 경기 엑셀 업로드
             </button>
             <input type="file" id="importMatchExcelInput" accept=".xlsx, .xls, .csv" style="display: none;" onchange="MatchExcelImporter.handleMatchFileUpload(this.files[0])">
 
             <button id="exportJsonDataBtn" class="btn btn-secondary"><i class="ph ph-export"></i> 데이터 백업</button>
-            <button class="btn btn-secondary locked-btn" onclick="if(AdminManager.checkAdmin('데이터 복원')) document.getElementById('importJsonFileInput').click()">
+            <button class="btn btn-secondary" onclick="document.getElementById('importJsonFileInput').click()">
               <i class="ph ph-import"></i> 복원
             </button>
             <input type="file" id="importJsonFileInput" accept=".json" style="display: none;">
@@ -1041,114 +1052,23 @@
       }
     };
 
-    /* 🔒 관리자 인증 & 잠금/해제 모듈 */
+    /* 🔓 관리자 인증 & 권한 모듈 (상시 전체 권한 개방) */
     const AdminManager = {
-      ADMIN_PW: '0001',
-      isAdmin: false,
+      isAdmin: true,
 
       init() {
-        this.isAdmin = sessionStorage.getItem('TENNIS_ADMIN_AUTH') === 'true';
+        this.isAdmin = true;
         this.updateUI();
       },
 
-      getAdminPw() {
-        return localStorage.getItem('TENNIS_ADMIN_PW') || this.ADMIN_PW;
-      },
-
-      promptChangePassword() {
-        if (!this.checkAdmin('비밀번호 변경')) return;
-        const cur = prompt('현재 관리자 비밀번호를 입력하세요:');
-        if (cur !== this.getAdminPw()) {
-          if (cur !== null) Toast.show('현재 비밀번호가 일치하지 않습니다.', 'error');
-          return;
-        }
-        const newPw = prompt('새로운 관리자 비밀번호를 입력하세요:');
-        if (!newPw || !newPw.trim()) {
-          Toast.show('새 비밀번호를 입력해 주세요.', 'error');
-          return;
-        }
-        const confirmPw = prompt('새로운 비밀번호를 한 번 더 입력하세요:');
-        if (newPw.trim() !== confirmPw.trim()) {
-          Toast.show('새 비밀번호 재입력이 일치하지 않습니다.', 'error');
-          return;
-        }
-        localStorage.setItem('TENNIS_ADMIN_PW', newPw.trim());
-        App.saveState();
-        Toast.show('🔑 관리자 비밀번호가 성공적으로 변경되었습니다!');
-      },
-
-      toggleAdmin() {
-        if (this.isAdmin) {
-          this.isAdmin = false;
-          sessionStorage.removeItem('TENNIS_ADMIN_AUTH');
-          MatchingManager.isMemberChangeModeEnabled = false;
-          MatchingManager.selectedPlayerForChange = null;
-          Toast.show('관리자 로그아웃 되었습니다. (일반 회원 읽기 전용 뷰어 모드)');
-        } else {
-          const input = prompt('관리자 비밀번호를 입력하세요 (초기 비밀번호: 0001):');
-          if (input === this.getAdminPw()) {
-            this.isAdmin = true;
-            sessionStorage.setItem('TENNIS_ADMIN_AUTH', 'true');
-            Toast.show('관리자로 인증되었습니다! (모든 편집/생성 권한 해제)');
-          } else if (input !== null) {
-            Toast.show('비밀번호가 올바르지 않습니다.', 'error');
-          }
-        }
-        this.updateUI();
-        MatchingManager.render();
-        ParticipantManager.render();
-        StatsManager.calculateAndRender();
-      },
-
-      checkAdmin(actionName = '이 기능') {
-        if (!this.isAdmin) {
-          Toast.show(`🔒 ${actionName}은(는) 관리자 전용 기능입니다. 상단 [관리자 인증]을 완료해 주세요.`, 'error');
-          return false;
-        }
+      checkAdmin() {
         return true;
       },
 
       updateUI() {
-        const btn = document.getElementById('adminAuthBtn');
-        const badge = document.getElementById('adminStatusBadge');
-        const changePwBtn = document.getElementById('changeAdminPwBtn');
-
-        if (btn && badge) {
-          if (this.isAdmin) {
-            btn.innerHTML = `<i class="ph ph-lock-key-open" style="color:var(--vivid-yellow)"></i> 🔓 관리자 로그아웃`;
-            btn.className = 'btn btn-secondary admin-auth-btn';
-            badge.textContent = '🔓 관리자 모드 (모든 편집/수정 해제됨)';
-            badge.classList.add('active');
-          } else {
-            btn.innerHTML = `<i class="ph ph-lock-key"></i> 🔒 관리자 인증`;
-            btn.className = 'btn btn-secondary admin-auth-btn';
-            badge.textContent = '🔒 일반 회원 모드 (스코어 입력만 가능)';
-            badge.classList.remove('active');
-          }
-        }
-        if (changePwBtn) {
-          changePwBtn.style.display = this.isAdmin ? 'inline-flex' : 'none';
-        }
-
-        const adminBtnIds = [
-          'generateSetMatchBtn', 'generateSingleMatchBtn', 'deleteAllMatchesBtn',
-          'toggleMonthDeleteModeBtn', 'addMonthBtn', 'addParticipantBtn', 'clearParticipantsBtn',
-          'memberChangeToggleBtn'
-        ];
-
-        adminBtnIds.forEach(id => {
-          const el = document.getElementById(id);
-          if (el) {
-            if (this.isAdmin) {
-              el.classList.remove('locked-btn');
-            } else {
-              el.classList.add('locked-btn');
-            }
-          }
-        });
-
+        document.querySelectorAll('.locked-btn').forEach(el => el.classList.remove('locked-btn'));
         document.getElementsByName('matchMode').forEach(radio => {
-          radio.disabled = !this.isAdmin;
+          radio.disabled = false;
         });
       }
     };
@@ -1907,14 +1827,12 @@
         const btn = document.getElementById('toggleMonthDeleteModeBtn');
         if (btn) {
           if (this.isMonthDeleteModeActive) {
-            btn.className = 'btn btn-danger locked-btn';
+            btn.className = 'btn btn-danger';
             btn.innerHTML = `<i class="ph ph-check"></i> 완료`;
           } else {
-            btn.className = 'btn btn-secondary locked-btn';
+            btn.className = 'btn btn-secondary';
             btn.innerHTML = `<i class="ph ph-trash"></i> 월 삭제`;
           }
-          if (AdminManager.isAdmin) btn.classList.remove('locked-btn');
-          else btn.classList.add('locked-btn');
         }
 
         container.innerHTML = App.monthList.map(m => {
@@ -1978,15 +1896,15 @@
             if (isSelectedTarget) {
               rightActionHtml = `<span class="badge-changing" style="margin: 0; padding: 4px 10px; font-size: 0.85rem; border-radius: 12px; box-shadow: 0 0 8px rgba(255,255,0,0.6);">[교체대상]</span>`;
             } else {
-              rightActionHtml = `<button class="btn-replace-target ${!AdminManager.isAdmin ? 'locked-btn' : ''}" onclick="MatchingManager.executePlayerReplacement('${p.id}')">⚡ 교체</button>`;
+              rightActionHtml = `<button class="btn-replace-target" onclick="MatchingManager.executePlayerReplacement('${p.id}')">⚡ 교체</button>`;
             }
           }
 
           return `
             <div class="participant-v-item ${isAbs ? 'absent-item' : ''} ${isSelectedTarget ? 'selected-for-change' : ''}">
               <div class="name-box">
-                ${isAbs ? `<button class="btn-restore-toggle ${!AdminManager.isAdmin ? 'locked-btn' : ''}" title="참석으로 복원" onclick="MatchingManager.toggleAbsent('${p.id}', false)"><i class="ph ph-arrow-u-up-left"></i></button>`
-                        : `<button class="btn-absent-toggle ${!AdminManager.isAdmin ? 'locked-btn' : ''}" title="불참으로 지정" onclick="MatchingManager.toggleAbsent('${p.id}', true)"><i class="ph ph-x"></i></button>`}
+                ${isAbs ? `<button class="btn-restore-toggle" title="참석으로 복원" onclick="MatchingManager.toggleAbsent('${p.id}', false)"><i class="ph ph-arrow-u-up-left"></i></button>`
+                        : `<button class="btn-absent-toggle" title="불참으로 지정" onclick="MatchingManager.toggleAbsent('${p.id}', true)"><i class="ph ph-x"></i></button>`}
                 <span class="name-text">${p.name} ${p.gender === 'F' ? '<span class="badge-f">(여)</span>' : '<span class="badge-m">(남)</span>'}</span>
               </div>
               <div style="display:flex; align-items:center; flex-shrink:0; white-space:nowrap;">
@@ -2078,8 +1996,6 @@
             toggleBtn.className = 'btn-toggle-switch off';
             toggleBtn.innerHTML = `<i class="ph ph-toggle-left" style="font-size:1.2rem;"></i> OFF`;
           }
-          if (AdminManager.isAdmin) toggleBtn.classList.remove('locked-btn');
-          else toggleBtn.classList.add('locked-btn');
         }
 
         const roundListContainer = document.getElementById('matchesRoundList') || document.getElementById('roundListContainer'); if (!roundListContainer) return;
@@ -2097,9 +2013,6 @@
           const matchTypeStr = m.typeLabel || (m.mode === 'mixed' ? '혼복' : '복식');
           const getPlayerNames = (pIds, teamKey) => pIds.map((id, pIdx) => {
             if (!id) {
-              if (!AdminManager.isAdmin) {
-                return `<div class="player-item blank-slot-item"><span style="color:var(--text-muted); font-size:0.85rem;">[미정]</span></div>`;
-              }
               const attendingList = ParticipantManager.list.filter(p => !this.absentPlayers.has(p.id));
               const optionsHtml = attendingList.map(p => `<option value="${p.id}">${p.name} (${p.gender === 'F' ? '여' : '남'})</option>`).join('');
               return `
@@ -2120,28 +2033,28 @@
             const seqNum = counts[p.id] || 1;
             const gBadge = p.gender === 'F' ? '<span class="badge-f">(여)</span>' : '<span class="badge-m">(남)</span>';
             const bonus = (this.latecomerBonus && this.latecomerBonus[p.id]) || 0;
-            const bonusBadgeHtml = (AdminManager.isAdmin && bonus > 0) ? `<span class="late-bonus-badge" title="지각 보정 +${bonus}경기">(+${bonus})</span>` : '';
+            const bonusBadgeHtml = (bonus > 0) ? `<span class="late-bonus-badge" title="지각 보정 +${bonus}경기">(+${bonus})</span>` : '';
 
             const excludedCount = this.matches.filter(matchObj => [...(matchObj.teamA || []), ...(matchObj.teamB || [])].includes(p.id) && (matchObj.excludedStatsPlayers || []).includes(p.id)).length;
             const excludedBadgeHtml = excludedCount > 0 ? `<span class="stats-excluded-count-badge" title="총 통계 미반영 -${excludedCount}경기">(-${excludedCount})</span>` : '';
 
-            const deleteXBtn = AdminManager.isAdmin ? `
+            const deleteXBtn = `
               <span class="btn-player-delete-x" onclick="event.stopPropagation(); MatchingManager.removePlayerFromMatch('${m.id}', '${teamKey}', ${pIdx})" title="${p.name} 삭제 (빈칸으로 변경)">✕</span>
-            ` : '';
+            `;
 
-            const statsToggleBtn = AdminManager.isAdmin ? `
+            const statsToggleBtn = `
               <button class="btn-stats-toggle ${isExcluded ? 'excluded' : 'included'}" onclick="event.stopPropagation(); MatchingManager.toggleStatsExclusion('${m.id}', '${p.id}')" title="${isExcluded ? '클릭하여 통계 기록 포함' : '클릭하여 통계 기록 제외'}">
                 ${isExcluded ? '🚫미반영' : '📊반영'}
               </button>
-            ` : '';
+            `;
 
-            const clickAttr = (this.isMemberChangeModeEnabled && AdminManager.isAdmin)
+            const clickAttr = this.isMemberChangeModeEnabled
               ? `onclick="MatchingManager.selectPlayerForChange('${m.id}', '${teamKey}', ${pIdx}, '${p.id}')"`
               : '';
-            const titleAttr = (this.isMemberChangeModeEnabled && AdminManager.isAdmin)
+            const titleAttr = this.isMemberChangeModeEnabled
               ? `title="클릭하여 교체 선수 선택"`
               : '';
-            const clickableClass = (this.isMemberChangeModeEnabled && AdminManager.isAdmin) ? 'clickable-player' : '';
+            const clickableClass = this.isMemberChangeModeEnabled ? 'clickable-player' : '';
 
             return `<div class="player-item ${clickableClass} ${isSelected ? 'selected-for-change' : ''} ${isExcluded ? 'stats-excluded-player' : ''}" ${clickAttr} ${titleAttr}>
               <span>${p.name}</span> ${gBadge} <span class="match-seq-badge">(${seqNum})</span>${bonusBadgeHtml}${excludedBadgeHtml}
@@ -2153,19 +2066,13 @@
           const sA = parseInt(m.scoreA, 10), sB = parseInt(m.scoreB, 10), isCompleted = !isNaN(sA) && !isNaN(sB);
           const winnerA = isCompleted && sA > sB ? 'winner' : '', winnerB = isCompleted && sB > sA ? 'winner' : '';
 
-          const isScoreDisabled = !AdminManager.isAdmin || m.isScoreLocked;
+          const isScoreDisabled = m.isScoreLocked;
 
           let lockBtnHtml = '';
-          if (AdminManager.isAdmin) {
-            if (m.isScoreLocked) {
-              lockBtnHtml = `<button class="btn btn-secondary btn-sm" onclick="MatchingManager.unlockScore('${m.id}')" title="관리자: 점수 수정 잠금 해제"><i class="ph ph-lock-key-open"></i> 수정 해제</button>`;
-            } else {
-              lockBtnHtml = `<button class="btn btn-yellow btn-sm btn-lock-score" onclick="MatchingManager.lockScore('${m.id}')" title="점수 입력 완료 및 수정 잠금"><i class="ph ph-check"></i> 완료</button>`;
-            }
+          if (m.isScoreLocked) {
+            lockBtnHtml = `<button class="btn btn-secondary btn-sm" onclick="MatchingManager.unlockScore('${m.id}')" title="점수 수정 잠금 해제"><i class="ph ph-pencil-simple"></i> 점수 수정</button>`;
           } else {
-            if (m.isScoreLocked) {
-              lockBtnHtml = `<span class="badge-score-locked"><i class="ph ph-lock-key"></i> 완료됨</span>`;
-            }
+            lockBtnHtml = `<button class="btn btn-yellow btn-sm btn-lock-score" onclick="MatchingManager.lockScore('${m.id}')" title="점수 입력 완료 및 확정"><i class="ph ph-check"></i> 확정</button>`;
           }
 
           return `
@@ -2177,7 +2084,7 @@
                 </span>
                 <div class="match-card-actions">
                   <span class="match-status ${isCompleted ? 'status-completed' : ''}">${isCompleted ? '경기 완료' : '진행 예정'}</span>
-                  <button class="btn-card-delete ${!AdminManager.isAdmin ? 'locked-btn' : ''}" onclick="MatchingManager.deleteSingleMatch('${m.id}')" title="이 경기 삭제"><i class="ph ph-trash"></i> 삭제</button>
+                  <button class="btn-card-delete" onclick="MatchingManager.deleteSingleMatch('${m.id}')" title="이 경기 삭제"><i class="ph ph-trash"></i> 삭제</button>
                 </div>
               </div>
               <div class="teams-container">
@@ -2192,9 +2099,9 @@
                 </div>
               </div>
               <div class="score-controller">
-                <input type="number" min="0" max="99" class="score-input" value="${m.scoreA}" placeholder="0" oninput="MatchingManager.handleScoreChange('${m.id}', this.value, this.nextElementSibling.nextElementSibling.value)" ${isScoreDisabled ? 'readonly disabled style="opacity:0.85; cursor:not-allowed;" title="🔒 스코어 입력은 관리자 전용 기능입니다."' : ''}>
+                <input type="number" min="0" max="99" class="score-input" value="${m.scoreA}" placeholder="0" oninput="MatchingManager.handleScoreChange('${m.id}', this.value, this.nextElementSibling.nextElementSibling.value)" ${isScoreDisabled ? 'readonly disabled style="opacity:0.85; cursor:not-allowed;" title="점수가 확정되었습니다. 수정을 원하시면 [점수 수정] 버튼을 누르세요."' : ''}>
                 <span class="score-divider">:</span>
-                <input type="number" min="0" max="99" class="score-input" value="${m.scoreB}" placeholder="0" oninput="MatchingManager.handleScoreChange('${m.id}', this.previousElementSibling.previousElementSibling.value, this.value)" ${isScoreDisabled ? 'readonly disabled style="opacity:0.85; cursor:not-allowed;" title="🔒 스코어 입력은 관리자 전용 기능입니다."' : ''}>
+                <input type="number" min="0" max="99" class="score-input" value="${m.scoreB}" placeholder="0" oninput="MatchingManager.handleScoreChange('${m.id}', this.previousElementSibling.previousElementSibling.value, this.value)" ${isScoreDisabled ? 'readonly disabled style="opacity:0.85; cursor:not-allowed;" title="점수가 확정되었습니다. 수정을 원하시면 [점수 수정] 버튼을 누르세요."' : ''}>
                 ${lockBtnHtml}
               </div>
             </div>
@@ -2331,6 +2238,7 @@
 
     const App = {
       STORAGE_KEY: 'BEST_TENNIS_CLUB_DATA_V2',
+      GAS_API_URL: 'https://script.google.com/macros/s/AKfycbxEzbBXN39gfAMB8SgtHm3Q2Dzn6iNGYLlmQSrFYRA/exec',
       activeMonth: '3월', monthList: ['3월'],
       tournaments: { '3월': { currentRound: 0, matches: [], pairingHistory: [], absentPlayers: [], matchMode: 'regular' } },
       selectedStatsMonths: ['3월'],
@@ -2357,15 +2265,72 @@
         });
       },
 
-      loadStateFromCloudOrLocal() {
+      async loadStateFromCloudOrLocal() {
+        // 1. Google Apps Script 내부 환경일 때
         if (typeof google !== 'undefined' && google.script && google.script.run) {
           google.script.run.withSuccessHandler(cloudData => {
-            if (cloudData) { this.applyLoadedData(cloudData); } else { this.loadStateFromLocalStorage(); }
+            if (cloudData) {
+              this.applyLoadedData(cloudData);
+              try { localStorage.setItem(this.STORAGE_KEY, JSON.stringify(cloudData)); } catch (e) {}
+              this.updateCloudStatus('클라우드 동기화 완료');
+            } else {
+              this.loadStateFromLocalStorage();
+              this.updateCloudStatus('초기 데이터');
+            }
             this.renderAllViews();
           }).getCloudData();
-        } else {
-          this.loadStateFromLocalStorage();
-          this.renderAllViews();
+          return;
+        }
+
+        // 2. 외부 브라우저(GitHub Pages 등) 환경일 때
+        // (1) 먼저 로컬스토리지 캐시로 즉시 표시하여 로딩 지연 방지
+        this.loadStateFromLocalStorage();
+        this.renderAllViews();
+
+        // (2) 백엔드 구글 클라우드 DB에서 최신 데이터 비동기 조회
+        await this.syncFromCloud(false);
+      },
+
+      async syncFromCloud(showToast = false) {
+        const badge = document.getElementById('cloudStatusBadge');
+        if (badge) badge.innerHTML = `<i class="ph ph-spinner ph-spin"></i> ☁️ 클라우드 동기화 중...`;
+
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+          google.script.run.withSuccessHandler(cloudData => {
+            if (cloudData) {
+              this.applyLoadedData(cloudData);
+              try { localStorage.setItem(this.STORAGE_KEY, JSON.stringify(cloudData)); } catch (e) {}
+              this.renderAllViews();
+              this.updateCloudStatus('클라우드 동기화 완료');
+              if (showToast) Toast.show('☁️ 최신 데이터를 구글 클라우드에서 불러왔습니다!');
+            } else {
+              this.updateCloudStatus('동기화 완료 (클라우드 비어있음)');
+            }
+          }).getCloudData();
+          return;
+        }
+
+        if (this.GAS_API_URL) {
+          try {
+            const res = await fetch(`${this.GAS_API_URL}?action=getData&t=${Date.now()}`);
+            if (res.ok) {
+              const cloudData = await res.json();
+              if (cloudData && (cloudData.tournaments || cloudData.participants)) {
+                this.applyLoadedData(cloudData);
+                try { localStorage.setItem(this.STORAGE_KEY, JSON.stringify(cloudData)); } catch (e) {}
+                this.renderAllViews();
+                this.updateCloudStatus('클라우드 동기화 완료');
+                if (showToast) Toast.show('☁️ 최신 데이터를 클라우드에서 성공적으로 불러왔습니다!');
+                return;
+              }
+            }
+            this.updateCloudStatus('로컬 데이터 유지');
+            if (showToast) Toast.show('클라우드에 저장된 최신 데이터가 없어 로컬 데이터를 유지합니다.');
+          } catch (err) {
+            console.warn('Cloud sync error (fallback to local):', err);
+            this.updateCloudStatus('로컬 캐시 모드');
+            if (showToast) Toast.show('클라우드 서버 통신 지연: 현재 로컬 데이터를 유지합니다.', 'error');
+          }
         }
       },
 
@@ -2402,9 +2367,57 @@
         };
         const jsonStr = JSON.stringify(payload);
         try { localStorage.setItem(this.STORAGE_KEY, jsonStr); } catch (e) {}
+
+        const badge = document.getElementById('cloudStatusBadge');
+        if (badge) badge.innerHTML = `<i class="ph ph-spinner ph-spin"></i> ☁️ 클라우드 저장 중...`;
+
+        // 1. Google Apps Script 내부 실행 시
         if (typeof google !== 'undefined' && google.script && google.script.run) {
-          google.script.run.saveCloudData(jsonStr);
+          google.script.run.withSuccessHandler(() => {
+            this.updateCloudStatus('클라우드 저장 완료');
+          }).saveCloudData(jsonStr);
+          return;
         }
+
+        // 2. 외부 브라우저(GitHub Pages 등) 환경일 때 Google Apps Script REST API로 전송
+        if (this.GAS_API_URL) {
+          fetch(this.GAS_API_URL, {
+            method: 'POST',
+            body: jsonStr,
+            mode: 'no-cors'
+          }).then(() => {
+            this.updateCloudStatus('클라우드 저장 완료');
+          }).catch(err => {
+            console.warn('Cloud save error:', err);
+            this.updateCloudStatus('로컬 저장 완료 (클라우드 지연)');
+          });
+        }
+      },
+
+      updateCloudStatus(msg) {
+        const badge = document.getElementById('cloudStatusBadge');
+        const timeEl = document.getElementById('cloudLastSyncTime');
+        const now = new Date();
+        const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+        if (badge) {
+          badge.innerHTML = `<i class="ph-fill ph-check-circle" style="color:#4ade80;"></i> ☁️ ${msg}`;
+        }
+        if (timeEl) {
+          timeEl.textContent = `(동기화: ${timeStr})`;
+        }
+      },
+
+      copyViewerLink() {
+        const fullUrl = window.location.href;
+        let viewerUrl = fullUrl.substring(0, fullUrl.lastIndexOf('/') + 1) + 'viewer.html';
+        if (!viewerUrl.startsWith('http')) {
+          viewerUrl = 'https://dydrb87-eng.github.io/BestTennis/viewer.html';
+        }
+        navigator.clipboard.writeText(viewerUrl).then(() => {
+          Toast.show('📋 회원용 뷰어 링크가 복사되었습니다! 단톡방/밴드에 공유하세요.');
+        }).catch(() => {
+          prompt('아래 회원용 뷰어 주소를 복사하여 공유하세요:', viewerUrl);
+        });
       },
 
       exportJsonBackup() {
@@ -2418,7 +2431,6 @@
       },
 
       importJsonBackup(file) {
-        if (!AdminManager.checkAdmin('데이터 복원')) return;
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
