@@ -595,7 +595,7 @@
           <i class="ph ph-tennis-ball"></i> 실시간 대진 & 결과
         </button>
         <button class="tab-btn" data-tab="tab-leaderboard">
-          <i class="ph ph-trophy"></i> 순위 리더보드
+          <i class="ph ph-trophy"></i> 통계
         </button>
         <button class="tab-btn" data-tab="tab-attendees">
           <i class="ph ph-users-three"></i> 출전 현황 (<span id="attendeeTabCount">0</span>명)
@@ -637,7 +637,7 @@
       <div class="glass-panel">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
           <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--vivid-yellow);">
-            <i class="ph ph-ranking"></i> <span id="currentMonthStatsTitle">월례대회</span> 종합 순위
+            <i class="ph ph-ranking"></i> <span id="currentMonthStatsTitle">월례대회</span> 통계
           </h2>
           <span style="color: var(--text-muted); font-size: 0.9rem;">
             * 순위 기준: 승률 > 득실차 > 다승 > 최소 패배
@@ -651,6 +651,7 @@
                 <th style="width: 70px;">순위</th>
                 <th>선수명</th>
                 <th style="width: 70px;">성별</th>
+                <th style="width: 70px;">참여 수</th>
                 <th style="width: 80px;">경기수</th>
                 <th style="width: 70px;">승</th>
                 <th style="width: 70px;">패</th>
@@ -939,6 +940,7 @@
             id: p.id,
             name: p.name,
             gender: p.gender,
+            tournamentCount: 0,
             played: 0,
             wins: 0,
             losses: 0,
@@ -947,6 +949,27 @@
             ptsDiff: 0,
             winRate: 0
           };
+        });
+
+        // 월례대회 참여 수 집계 (출전했거나 참석 명단에 포함된 경우)
+        this.monthList.forEach(mName => {
+          const tournament = this.tournaments[mName]; if (!tournament) return;
+          const playerPlayedInMonth = new Set();
+          if (tournament.matches) {
+            tournament.matches.forEach(m => {
+              (m.teamA || []).forEach(id => { if (id) playerPlayedInMonth.add(id); });
+              (m.teamB || []).forEach(id => { if (id) playerPlayedInMonth.add(id); });
+            });
+          }
+          const isAbsentArr = Array.isArray(tournament.absentPlayers) ? tournament.absentPlayers : [];
+          const hasMatches = tournament.matches && tournament.matches.length > 0;
+          this.participants.forEach(p => {
+            if (stats[p.id]) {
+              if (playerPlayedInMonth.has(p.id) || (hasMatches && !isAbsentArr.includes(p.id))) {
+                stats[p.id].tournamentCount += 1;
+              }
+            }
+          });
         });
 
         matches.forEach(m => {
@@ -989,7 +1012,7 @@
         });
 
         if (statList.length === 0 || matches.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="9" style="padding: 30px; color: var(--text-muted);">진행된 경기 결과가 없습니다.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="10" style="padding: 30px; color: var(--text-muted);">진행된 경기 결과가 없습니다.</td></tr>`;
           return;
         }
 
@@ -1009,6 +1032,7 @@
               <td class="rank-cell ${rankClass}">${rankDisplay}</td>
               <td class="name-cell">${st.name}</td>
               <td>${st.gender === 'F' ? '<span class="badge-gender badge-f">여</span>' : '<span class="badge-gender badge-m">남</span>'}</td>
+              <td style="text-align: center; font-weight: 800; color: var(--vivid-yellow);">${st.tournamentCount}</td>
               <td><strong>${st.played}</strong></td>
               <td style="color:#4ade80; font-weight:700;">${st.wins}</td>
               <td style="color:#f87171; font-weight:700;">${st.losses}</td>

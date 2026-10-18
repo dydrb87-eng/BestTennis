@@ -387,9 +387,52 @@
       white-space: nowrap;
       flex-shrink: 0;
     }
-    .btn-replace-target:hover {
-      background: var(--vivid-yellow-hover);
-      transform: scale(1.05);
+    /* Match Card Drag & Reorder styling */
+    .match-card.is-dragging {
+      opacity: 0.35 !important;
+      border: 2px dashed var(--vivid-yellow) !important;
+      transform: scale(0.98);
+    }
+    .match-card.drag-over {
+      border-top: 4px solid var(--vivid-yellow) !important;
+      box-shadow: 0 -8px 20px rgba(255, 255, 0, 0.45);
+    }
+    .drag-handle {
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 4px;
+      color: var(--vivid-yellow);
+      font-size: 1.35rem;
+      border-radius: 4px;
+      transition: var(--transition);
+    }
+    .drag-handle:hover {
+      background: rgba(255, 255, 0, 0.2);
+    }
+    .drag-handle:active {
+      cursor: grabbing;
+    }
+    .btn-move-match {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-muted);
+      border-radius: 4px;
+      padding: 2px 5px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      line-height: 1;
+    }
+    .btn-move-match:hover {
+      background: var(--vivid-yellow);
+      color: var(--text-dark);
+      border-color: var(--vivid-yellow);
     }
 
     /* Member Change ON/OFF Toggle Switch Styling */
@@ -827,6 +870,12 @@
           <span id="cloudLastSyncTime" style="font-size: 0.8rem; color: var(--text-muted);">(로컬 & 클라우드 연동)</span>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
+          <button id="undoActionBtn" class="btn btn-secondary btn-sm" style="padding: 6px 12px; font-size: 0.85rem; opacity: 0.45;" onclick="UndoRedoManager.undo()" title="실행 취소 / 되돌리기 (Ctrl+Z)" disabled>
+            <i class="ph ph-arrow-u-up-left"></i> 되돌리기
+          </button>
+          <button id="redoActionBtn" class="btn btn-secondary btn-sm" style="padding: 6px 12px; font-size: 0.85rem; opacity: 0.45;" onclick="UndoRedoManager.redo()" title="다시 실행 (Ctrl+Y)" disabled>
+            <i class="ph ph-arrow-u-up-right"></i> 다시 실행
+          </button>
           <button class="btn btn-secondary btn-sm" style="padding: 6px 12px; font-size: 0.85rem;" onclick="App.syncFromCloud(true)" title="다른 기기에서 수정한 최신 데이터를 불러옵니다.">
             <i class="ph ph-arrows-clockwise"></i> 🔄 최신 불러오기
           </button>
@@ -847,7 +896,7 @@
           <i class="ph ph-brackets-square"></i> 2. 경기 매칭
         </button>
         <button class="tab-btn" data-tab="tab-stats">
-          <i class="ph ph-trophy"></i> 3. 통계 및 순위
+          <i class="ph ph-trophy"></i> 3. 통계
         </button>
       </nav>
     </header>
@@ -967,22 +1016,20 @@
       <div class="glass-panel" style="padding: 24px;">
         <div class="panel-header" style="margin-bottom: 20px;">
           <h3 class="sub-panel-title"><i class="ph ph-tennis-ball"></i> 매칭 대진표 & 실시간 스코어 입력</h3>
-          <div class="member-change-toggle-container">
-            <span class="toggle-label"><i class="ph ph-arrows-left-right"></i> 개별 멤버 변경:</span>
-            <button id="memberChangeToggleBtn" class="btn-toggle-switch off" onclick="MatchingManager.toggleMemberChangeMode()">
-              <i class="ph ph-toggle-left" style="font-size:1.2rem;"></i> OFF
-            </button>
+          <div style="display:flex; align-items:center; gap:8px; font-size:0.92rem; color:var(--text-muted); background:rgba(0,0,0,0.35); padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,0.18);">
+            <i class="ph-bold ph-hand-tap" style="color:var(--vivid-yellow);"></i> 
+            <span>선수를 누르면 <strong>즉시 맞교체</strong> | <strong>⋮⋮</strong> 핸들로 게임 순서 변경</span>
           </div>
         </div>
         <div id="matchesRoundList" class="matches-round-list"></div>
       </div>
     </section>
 
-    <!-- TAB 3: Statistics & Leaderboard -->
+    <!-- TAB 3: Statistics -->
     <section id="tab-stats" class="tab-pane">
       <div class="glass-panel">
         <div class="panel-header">
-          <h2 class="panel-title"><i class="ph ph-ranking"></i> 통계 및 순위 리더보드</h2>
+          <h2 class="panel-title"><i class="ph ph-ranking"></i> 통계</h2>
           <div id="printMetaInfo" class="print-meta-info" style="display: none;"></div>
           <div class="btn-group">
             <button id="exportPdfStatsBtn" class="btn btn-accent" onclick="StatsManager.exportToPDF()">
@@ -1018,6 +1065,7 @@
               <tr>
                 <th class="sortable" data-sort="rank" onclick="StatsManager.setSort('rank')">순위</th>
                 <th class="sortable" data-sort="name" onclick="StatsManager.setSort('name')">선수명</th>
+                <th class="sortable" data-sort="tournamentCount" onclick="StatsManager.setSort('tournamentCount')">참여 수</th>
                 <th class="sortable" data-sort="played" onclick="StatsManager.setSort('played')">경기수</th>
                 <th class="sortable" data-sort="wins" onclick="StatsManager.setSort('wins')">승</th>
                 <th class="sortable" data-sort="losses" onclick="StatsManager.setSort('losses')">패</th>
@@ -1072,6 +1120,114 @@
         });
       }
     };
+
+    /* ↩️ 실행 취소(Undo) / ↪️ 다시 실행(Redo) 관리자 */
+    const UndoRedoManager = {
+      history: [],
+      future: [],
+      maxHistory: 30,
+      isOperating: false,
+
+      captureState() {
+        if (typeof MatchingManager !== 'undefined' && MatchingManager.saveCurrentMonthData) {
+          MatchingManager.saveCurrentMonthData();
+        }
+        return JSON.stringify({
+          participants: ParticipantManager.list,
+          activeMonth: App.activeMonth,
+          monthList: App.monthList,
+          tournaments: App.tournaments
+        });
+      },
+
+      record() {
+        if (this.isOperating) return;
+        const currentState = this.captureState();
+        if (this.history.length > 0 && this.history[this.history.length - 1] === currentState) return;
+        this.history.push(currentState);
+        if (this.history.length > this.maxHistory) this.history.shift();
+        this.future = [];
+        this.updateButtons();
+      },
+
+      undo() {
+        if (this.history.length === 0) {
+          Toast.show('더 이상 되돌릴 작업이 없습니다.', 'info');
+          return;
+        }
+        this.isOperating = true;
+        const currentState = this.captureState();
+        this.future.push(currentState);
+
+        const prevStateStr = this.history.pop();
+        try {
+          const prevState = JSON.parse(prevStateStr);
+          App.applyLoadedData(prevState);
+          App.renderAllViews();
+          App.saveState();
+          Toast.show('↩️ 이전 작업 상태로 되돌렸습니다.');
+        } catch (e) {
+          console.error('Undo failed:', e);
+        } finally {
+          this.isOperating = false;
+          this.updateButtons();
+        }
+      },
+
+      redo() {
+        if (this.future.length === 0) {
+          Toast.show('다시 실행할 작업이 없습니다.', 'info');
+          return;
+        }
+        this.isOperating = true;
+        const currentState = this.captureState();
+        this.history.push(currentState);
+
+        const nextStateStr = this.future.pop();
+        try {
+          const nextState = JSON.parse(nextStateStr);
+          App.applyLoadedData(nextState);
+          App.renderAllViews();
+          App.saveState();
+          Toast.show('↪️ 작업을 다시 실행했습니다.');
+        } catch (e) {
+          console.error('Redo failed:', e);
+        } finally {
+          this.isOperating = false;
+          this.updateButtons();
+        }
+      },
+
+      updateButtons() {
+        const uBtn = document.getElementById('undoActionBtn');
+        const rBtn = document.getElementById('redoActionBtn');
+        if (uBtn) {
+          uBtn.disabled = this.history.length === 0;
+          uBtn.style.opacity = this.history.length === 0 ? '0.45' : '1';
+        }
+        if (rBtn) {
+          rBtn.disabled = this.future.length === 0;
+          rBtn.style.opacity = this.future.length === 0 ? '0.45' : '1';
+        }
+      }
+    };
+
+    window.addEventListener('keydown', (e) => {
+      // 텍스트 인풋 등 입력 중일 때는 기본 편집 단축키 유지
+      if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        if (e.shiftKey) {
+          e.preventDefault();
+          UndoRedoManager.redo();
+        } else {
+          e.preventDefault();
+          UndoRedoManager.undo();
+        }
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        UndoRedoManager.redo();
+      }
+    });
 
     /* 이전 경기 결과 엑셀 대량 업로드 모듈 */
     const MatchExcelImporter = {
@@ -1160,6 +1316,7 @@
           return newP.id;
         };
 
+        UndoRedoManager.record(); // ↩️ 되돌리기 기록
         for (let i = 1; i < rows.length; i++) {
           const row = rows[i];
           if (!row || row.length === 0) continue;
@@ -1274,6 +1431,7 @@
             addedCount++;
           }
         }
+        UndoRedoManager.record();
         this.list = newList;
         this.render(); MatchingManager.render(); StatsManager.calculateAndRender(); App.saveState();
         Toast.show(`${addedCount}명의 참가자 목록을 파싱 및 저장했습니다!`);
@@ -1285,6 +1443,7 @@
       },
       addParticipant() {
         if (!AdminManager.checkAdmin('참가자 행 추가')) return;
+        UndoRedoManager.record();
         this.list.push({ id: 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5), name: `선수 ${this.list.length + 1}`, gender: 'M' });
         this.render(); MatchingManager.render(); StatsManager.calculateAndRender(); App.saveState();
       },
@@ -1295,12 +1454,14 @@
       },
       deleteParticipant(id) {
         if (!AdminManager.checkAdmin('참가자 삭제')) return;
+        UndoRedoManager.record();
         this.list = this.list.filter(p => p.id !== id);
         this.render(); MatchingManager.render(); StatsManager.calculateAndRender(); App.saveState();
       },
       clearAll() {
         if (!AdminManager.checkAdmin('참가자 전체 삭제')) return;
         if (confirm('참가자 목록을 전체 삭제하시겠습니까?')) {
+          UndoRedoManager.record();
           this.list = []; this.render(); MatchingManager.render(); StatsManager.calculateAndRender(); App.saveState(); Toast.show('참가자 목록이 초기화되었습니다.');
         }
       },
@@ -1353,6 +1514,7 @@
       /* ➕ / ➖ 지각 경기 수 보정 기능 */
       changeLatecomerBonus(playerId, delta) {
         if (!AdminManager.checkAdmin('지각 경기 수 보정')) return;
+        UndoRedoManager.record();
         if (!this.latecomerBonus) this.latecomerBonus = {};
         const current = this.latecomerBonus[playerId] || 0;
         const updated = Math.max(0, current + delta);
@@ -1384,6 +1546,8 @@
           return;
         }
         if (!confirm(`'${monthName}' 월례대회 데이터와 모든 경기 기록을 삭제하시겠습니까?`)) return;
+
+        UndoRedoManager.record();
 
         delete App.tournaments[monthName];
         App.monthList = App.monthList.filter(m => m !== monthName);
@@ -1419,28 +1583,8 @@
         if (t.matchMode) { const radio = document.querySelector(`input[name="matchMode"][value="${t.matchMode}"]`); if (radio) radio.checked = true; }
       },
 
-      /* 🔘 멤버 변경 ON / OFF 모드 토글 기능 */
-      toggleMemberChangeMode() {
-        if (!AdminManager.checkAdmin('멤버 변경 모드 설정')) return;
-        this.isMemberChangeModeEnabled = !this.isMemberChangeModeEnabled;
-        if (!this.isMemberChangeModeEnabled) {
-          this.selectedPlayerForChange = null;
-        }
-        this.render();
-        if (this.isMemberChangeModeEnabled) {
-          Toast.show('개별 멤버 변경: ON');
-        } else {
-          Toast.show('개별 멤버 변경: OFF');
-        }
-      },
-
-      /* 🔄 개별 멤버 선택 / 취소 / 교체 기능 */
+      /* 🔄 개별 멤버 선택 / 취소 / 즉시 맞교체 기능 (선수 클릭 시 바로 활성화) */
       selectPlayerForChange(matchId, team, index, playerId) {
-        if (!AdminManager.checkAdmin('개별 멤버 변경')) return;
-        if (!this.isMemberChangeModeEnabled) {
-          Toast.show('🔒 개별 멤버 변경 모드가 OFF 상태입니다. 오른쪽 상단 [개별 멤버 변경: ON] 스위치를 켜세요.', 'error');
-          return;
-        }
         const player = ParticipantManager.list.find(p => p.id === playerId);
         const match = this.matches.find(m => m.id === matchId);
         if (!player || !match) return;
@@ -1463,21 +1607,19 @@
           name: player.name, gameNumber: gameNum
         };
         this.render();
-        Toast.show(`[${gameNum}GAME ${team === 'teamA' ? '팀A' : '팀B'}] ${player.name} 선수가 선택되었습니다. 교체할 상대(다른 대진표 선수 또는 좌측 참가자)를 클릭하세요.`);
+        Toast.show(`🔄 [${gameNum}GAME ${team === 'teamA' ? '팀A' : '팀B'}] ${player.name} 선수가 선택되었습니다. 맞교체할 다른 선수를 클릭하세요.`);
       },
 
       cancelPlayerSelection() {
         this.selectedPlayerForChange = null;
         this.render();
+        Toast.show('선수 교체 선택이 취소되었습니다.');
       },
 
       executePlayerReplacement(targetPlayerId, targetMatchId = null, targetTeam = null, targetIndex = -1) {
-        if (!AdminManager.checkAdmin('개별 멤버 변경')) return;
-        if (!this.isMemberChangeModeEnabled) {
-          Toast.show('🔒 개별 멤버 변경 모드가 OFF 상태입니다.', 'error');
-          return;
-        }
         if (!this.selectedPlayerForChange) return;
+
+        UndoRedoManager.record(); // ↩️ 되돌리기 기록
 
         const sel = this.selectedPlayerForChange;
         const matchA = this.matches.find(m => m.id === sel.matchId);
@@ -1494,7 +1636,9 @@
           if (matchB) {
             matchA[sel.team][sel.index] = targetPlayerId;
             matchB[targetTeam][targetIndex] = sel.playerId;
-            Toast.show(`[${sel.gameNumber}GAME ${oldPlayer ? oldPlayer.name : '선수'}] ↔ [${matchB.gameNumber}GAME ${newPlayer.name}] 자리가 성공적으로 스왑 교체되었습니다!`);
+            this.savePair(matchA[sel.team][0], matchA[sel.team][1]);
+            this.savePair(matchB[targetTeam][0], matchB[targetTeam][1]);
+            Toast.show(`🔄 [${sel.gameNumber}GAME ${oldPlayer ? oldPlayer.name : '선수'}] ↔ [${matchB.gameNumber}GAME ${newPlayer.name}] 자리가 성공적으로 맞교체되었습니다!`);
           }
         } else {
           // 좌측 참가자 목록에서 클릭한 경우
@@ -1536,6 +1680,7 @@
 
       toggleAbsent(participantId, isAbsent) {
         if (!AdminManager.checkAdmin('참석/불참 지정')) return;
+        UndoRedoManager.record();
         if (isAbsent) this.absentPlayers.add(participantId); else this.absentPlayers.delete(participantId);
         this.saveCurrentMonthData(); this.renderParticipantCountsList(); App.saveState();
       },
@@ -1544,6 +1689,7 @@
         const targetIndex = this.matches.findIndex(m => m.id === matchId); if (targetIndex === -1) return;
         const gameNumStr = this.matches[targetIndex].gameNumber || (targetIndex + 1);
         if (confirm(`${gameNumStr}GAME 경기를 삭제하시겠습니까?`)) {
+          UndoRedoManager.record();
           if (this.selectedPlayerForChange && this.selectedPlayerForChange.matchId === matchId) {
             this.selectedPlayerForChange = null;
           }
@@ -1557,6 +1703,7 @@
         if (!AdminManager.checkAdmin('전체 경기 삭제')) return;
         const active = App.activeMonth; if (this.matches.length === 0) { Toast.show('삭제할 경기가 없습니다.', 'error'); return; }
         if (confirm(`${active} 대회의 모든 경기를 삭제하시겠습니까?`)) {
+          UndoRedoManager.record();
           this.selectedPlayerForChange = null;
           this.matches = []; this.currentRound = 0; this.pairingHistory.clear();
           this.render(); StatsManager.calculateAndRender(); App.saveState(); Toast.show(`${active} 대회의 모든 경기가 삭제되었습니다.`);
@@ -1570,6 +1717,7 @@
         const monthStr = prompt(`추가할 월을 입력하세요 (${unadded.join(', ')}):`, unadded[0]); if (!monthStr) return;
         const formatted = monthStr.trim().endsWith('월') ? monthStr.trim() : monthStr.trim() + '월';
         if (App.monthList.includes(formatted)) { Toast.show(`이미 ${formatted} 대회가 존재합니다.`, 'error'); return; }
+        UndoRedoManager.record();
         this.saveCurrentMonthData(); App.monthList.push(formatted); App.monthList.sort((a, b) => parseInt(a) - parseInt(b));
         App.tournaments[formatted] = { currentRound: 0, matches: [], pairingHistory: [], absentPlayers: [], matchMode: 'regular' };
         if (!App.selectedStatsMonths.includes(formatted)) App.selectedStatsMonths.push(formatted);
@@ -1584,6 +1732,7 @@
         if (!AdminManager.checkAdmin('월례대회 삭제')) return;
         const active = App.activeMonth; if (App.monthList.length <= 1) { Toast.show('최소 1개의 월례대회는 유지되어야 합니다.', 'error'); return; }
         if (confirm(`${active} 대회를 삭제하시겠습니까?`)) {
+          UndoRedoManager.record();
           this.selectedPlayerForChange = null;
           delete App.tournaments[active]; App.monthList = App.monthList.filter(m => m !== active);
           App.selectedStatsMonths = App.selectedStatsMonths.filter(m => m !== active); App.activeMonth = App.monthList[0];
@@ -1625,6 +1774,8 @@
 
         if (!matchTeams) { Toast.show('생성 가능한 경기가 없습니다.', 'error'); return; }
 
+        UndoRedoManager.record();
+
         const nextGameNum = this.matches.length + 1;
         const targetRound = this.currentRound === 0 ? 1 : Math.max(this.currentRound, Math.floor((nextGameNum - 1) / 3) + 1);
 
@@ -1663,6 +1814,7 @@
         }
         const roundMatches = this.createMatchesForRound(targetRound, mode, playedCounts, activeParticipants);
         if (roundMatches.length === 0) { Toast.show('생성 가능한 경기가 없습니다.', 'error'); return; }
+        UndoRedoManager.record();
         this.currentRound = targetRound; this.matches.push(...roundMatches);
         roundMatches.forEach(m => { this.savePair(m.teamA[0], m.teamA[1]); this.savePair(m.teamB[0], m.teamB[1]); });
         this.render(); StatsManager.calculateAndRender(); App.saveState(); Toast.show(`${App.activeMonth} ${roundMatches.length}개 경기가 생성되었습니다!`);
@@ -1759,6 +1911,7 @@
           Toast.show('팀 A와 팀 B의 점수를 모두 입력한 후 [완료]를 누르세요.', 'error');
           return;
         }
+        UndoRedoManager.record();
         match.isScoreLocked = true;
         this.render();
         StatsManager.calculateAndRender();
@@ -1777,6 +1930,7 @@
       removePlayerFromMatch(matchId, teamKey, pIdx) {
         if (!AdminManager.checkAdmin('선수 삭제')) return;
         const match = this.matches.find(m => m.id === matchId); if (!match) return;
+        UndoRedoManager.record();
         match[teamKey][pIdx] = null;
         this.render(); StatsManager.calculateAndRender(); App.saveState();
         Toast.show(`선수가 경기에서 제외되었습니다. [+ 선수선택]을 누르면 언제든 배치 가능합니다.`);
@@ -1785,6 +1939,7 @@
         if (!AdminManager.checkAdmin('선수 선택')) return;
         const match = this.matches.find(m => m.id === matchId); if (!match) return;
         if (!newPlayerId) return;
+        UndoRedoManager.record();
         match[teamKey][pIdx] = newPlayerId;
         if (match.teamA[0] && match.teamA[1]) this.savePair(match.teamA[0], match.teamA[1]);
         if (match.teamB[0] && match.teamB[1]) this.savePair(match.teamB[0], match.teamB[1]);
@@ -1796,6 +1951,7 @@
         if (!AdminManager.checkAdmin('통계 기록 제외/포함 설정')) return;
         const match = this.matches.find(m => m.id === matchId); if (!match) return;
         if (!match.excludedStatsPlayers) match.excludedStatsPlayers = [];
+        UndoRedoManager.record();
         const idx = match.excludedStatsPlayers.indexOf(playerId);
         if (idx > -1) {
           match.excludedStatsPlayers.splice(idx, 1);
@@ -1806,6 +1962,94 @@
         const p = ParticipantManager.list.find(item => item.id === playerId);
         const isNowEx = match.excludedStatsPlayers.includes(playerId);
         Toast.show(`[${p ? p.name : '선수'}] 통계 기록: ${isNowEx ? '🚫 미반영(제외됨)' : '📊 정상 반영'}`);
+      },
+
+      /* ↕️ 경기 순서 변경 (드래그 앤 드롭 및 ▲/▼ 버튼) */
+      draggedMatchId: null,
+
+      handleDragStart(e, matchId) {
+        this.draggedMatchId = matchId;
+        e.dataTransfer.setData('text/plain', matchId);
+        e.dataTransfer.effectAllowed = 'move';
+        const card = document.querySelector(`.match-card[data-id="${matchId}"]`);
+        if (card) {
+          setTimeout(() => card.classList.add('is-dragging'), 0);
+        }
+      },
+
+      handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        const card = e.currentTarget;
+        if (card && !card.classList.contains('drag-over')) {
+          card.classList.add('drag-over');
+        }
+      },
+
+      handleDragLeave(e) {
+        const card = e.currentTarget;
+        if (card) {
+          card.classList.remove('drag-over');
+        }
+      },
+
+      handleDragEnd(e) {
+        document.querySelectorAll('.match-card').forEach(c => {
+          c.classList.remove('is-dragging');
+          c.classList.remove('drag-over');
+        });
+        this.draggedMatchId = null;
+      },
+
+      handleDrop(e, targetId) {
+        e.preventDefault();
+        const draggedId = e.dataTransfer.getData('text/plain') || this.draggedMatchId;
+        this.handleDragEnd(e);
+
+        if (!draggedId || draggedId === targetId) return;
+
+        const fromIdx = this.matches.findIndex(m => m.id === draggedId);
+        const toIdx = this.matches.findIndex(m => m.id === targetId);
+        if (fromIdx === -1 || toIdx === -1) return;
+
+        UndoRedoManager.record(); // ↩️ 되돌리기 기록
+
+        const [moved] = this.matches.splice(fromIdx, 1);
+        this.matches.splice(toIdx, 0, moved);
+        this.matches.forEach((m, idx) => { m.gameNumber = idx + 1; });
+
+        this.saveCurrentMonthData();
+        this.render();
+        StatsManager.calculateAndRender();
+        App.saveState();
+        Toast.show(`순서가 변경되었습니다. (${moved.gameNumber}GAME)`);
+      },
+
+      moveMatch(matchId, direction) {
+        const idx = this.matches.findIndex(m => m.id === matchId);
+        if (idx === -1) return;
+
+        // 화면상 목록이 reversedMatches (최신 번호가 위)이므로:
+        // direction === 'up' (화면 위로 이동) -> matches 배열에서 인덱스 증가 (+1)
+        // direction === 'down' (화면 아래로 이동) -> matches 배열에서 인덱스 감소 (-1)
+        const targetIdx = direction === 'up' ? idx + 1 : idx - 1;
+        if (targetIdx < 0 || targetIdx >= this.matches.length) {
+          Toast.show(direction === 'up' ? '이미 가장 위쪽에 있는 경기입니다.' : '이미 가장 아래쪽에 있는 경기입니다.', 'info');
+          return;
+        }
+
+        UndoRedoManager.record(); // ↩️ 되돌리기 기록
+
+        const temp = this.matches[idx];
+        this.matches[idx] = this.matches[targetIdx];
+        this.matches[targetIdx] = temp;
+        this.matches.forEach((m, i) => { m.gameNumber = i + 1; });
+
+        this.saveCurrentMonthData();
+        this.render();
+        StatsManager.calculateAndRender();
+        App.saveState();
+        Toast.show(`경기 순서가 변경되었습니다.`);
       },
       updateCardState(matchId) {
         const card = document.querySelector(`.match-card[data-id="${matchId}"]`); if (!card) return;
@@ -1987,17 +2231,6 @@
         this.renderMonthPills();
         this.renderParticipantCountsList();
 
-        const toggleBtn = document.getElementById('memberChangeToggleBtn');
-        if (toggleBtn) {
-          if (this.isMemberChangeModeEnabled) {
-            toggleBtn.className = 'btn-toggle-switch on';
-            toggleBtn.innerHTML = `<i class="ph ph-toggle-right" style="font-size:1.2rem;"></i> ON`;
-          } else {
-            toggleBtn.className = 'btn-toggle-switch off';
-            toggleBtn.innerHTML = `<i class="ph ph-toggle-left" style="font-size:1.2rem;"></i> OFF`;
-          }
-        }
-
         const roundListContainer = document.getElementById('matchesRoundList') || document.getElementById('roundListContainer'); if (!roundListContainer) return;
         if (this.matches.length === 0) {
           roundListContainer.innerHTML = `<div class="empty-state"><i class="ph ph-tennis-ball"></i><p>${App.activeMonth} 생성된 경기가 없습니다. [1세트 생성] 또는 [1GAME 생성] 버튼을 클릭하세요.</p></div>`;
@@ -2048,13 +2281,11 @@
               </button>
             `;
 
-            const clickAttr = this.isMemberChangeModeEnabled
-              ? `onclick="MatchingManager.selectPlayerForChange('${m.id}', '${teamKey}', ${pIdx}, '${p.id}')"`
-              : '';
-            const titleAttr = this.isMemberChangeModeEnabled
-              ? `title="클릭하여 교체 선수 선택"`
-              : '';
-            const clickableClass = this.isMemberChangeModeEnabled ? 'clickable-player' : '';
+            const clickAttr = `onclick="MatchingManager.selectPlayerForChange('${m.id}', '${teamKey}', ${pIdx}, '${p.id}')"`;
+            const titleAttr = isSelected
+              ? `title="선택된 선수 (다시 클릭하면 선택 취소)"`
+              : (sel ? `title="클릭하면 [${sel.name}] 선수와 즉시 맞교체됩니다"` : `title="클릭하여 다른 선수와 맞교체"`);
+            const clickableClass = 'clickable-player';
 
             return `<div class="player-item ${clickableClass} ${isSelected ? 'selected-for-change' : ''} ${isExcluded ? 'stats-excluded-player' : ''}" ${clickAttr} ${titleAttr}>
               <span>${p.name}</span> ${gBadge} <span class="match-seq-badge">(${seqNum})</span>${bonusBadgeHtml}${excludedBadgeHtml}
@@ -2076,12 +2307,27 @@
           }
 
           return `
-            <div class="match-card" data-id="${m.id}">
+            <div class="match-card ${m.isScoreLocked ? 'score-locked' : ''}" data-id="${m.id}"
+                 ondragover="MatchingManager.handleDragOver(event)"
+                 ondragleave="MatchingManager.handleDragLeave(event)"
+                 ondrop="MatchingManager.handleDrop(event, '${m.id}')">
               <div class="match-card-header">
-                <span class="game-title">
-                  <i class="ph ph-trophy"></i> ${gameNum}GAME 
-                  <span class="game-type-badge">${matchTypeStr}</span>
-                </span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="drag-handle" draggable="true"
+                        ondragstart="MatchingManager.handleDragStart(event, '${m.id}')"
+                        ondragend="MatchingManager.handleDragEnd(event)"
+                        title="여기를 클릭하여 드래그하면 경기 순서가 변경됩니다">
+                    <i class="ph-bold ph-dots-six-vertical"></i>
+                  </span>
+                  <div style="display:inline-flex; flex-direction:column; gap:2px; margin-right:4px;">
+                    <button class="btn-move-match" onclick="MatchingManager.moveMatch('${m.id}', 'up')" title="위로 한 칸 이동">▲</button>
+                    <button class="btn-move-match" onclick="MatchingManager.moveMatch('${m.id}', 'down')" title="아래로 한 칸 이동">▼</button>
+                  </div>
+                  <span class="game-title">
+                    <i class="ph ph-trophy"></i> ${gameNum}GAME 
+                    <span class="game-type-badge">${matchTypeStr}</span>
+                  </span>
+                </div>
                 <div class="match-card-actions">
                   <span class="match-status ${isCompleted ? 'status-completed' : ''}">${isCompleted ? '경기 완료' : '진행 예정'}</span>
                   <button class="btn-card-delete" onclick="MatchingManager.deleteSingleMatch('${m.id}')" title="이 경기 삭제"><i class="ph ph-trash"></i> 삭제</button>
@@ -2159,19 +2405,36 @@
       calculateStats() {
         const statsMap = {};
         ParticipantManager.list.forEach(p => {
-          statsMap[p.id] = { id: p.id, name: p.name, gender: p.gender, played: 0, wins: 0, losses: 0, winRate: 0, ptsWon: 0, ptsLost: 0, ptsDiff: 0 };
+          statsMap[p.id] = { id: p.id, name: p.name, gender: p.gender, tournamentCount: 0, played: 0, wins: 0, losses: 0, winRate: 0, ptsWon: 0, ptsLost: 0, ptsDiff: 0 };
         });
         if (!App.selectedStatsMonths || App.selectedStatsMonths.length === 0) {
           App.selectedStatsMonths = App.monthList.length > 0 ? [App.monthList[App.monthList.length - 1]] : [...App.monthList];
         }
         App.selectedStatsMonths.forEach(mName => {
-          const tournament = App.tournaments[mName]; if (!tournament || !tournament.matches) return;
-          tournament.matches.forEach(m => {
-            const sA = parseInt(m.scoreA, 10), sB = parseInt(m.scoreB, 10);
-            const excluded = m.excludedStatsPlayers || [];
-            if (!isNaN(sA) && !isNaN(sB)) {
-              m.teamA.forEach(id => { if (id && statsMap[id] && !excluded.includes(id)) { statsMap[id].played += 1; statsMap[id].ptsWon += sA; statsMap[id].ptsLost += sB; if (sA > sB) statsMap[id].wins += 1; else if (sB > sA) statsMap[id].losses += 1; } });
-              m.teamB.forEach(id => { if (id && statsMap[id] && !excluded.includes(id)) { statsMap[id].played += 1; statsMap[id].ptsWon += sB; statsMap[id].ptsLost += sA; if (sB > sA) statsMap[id].wins += 1; else if (sA > sB) statsMap[id].losses += 1; } });
+          const tournament = App.tournaments[mName]; if (!tournament) return;
+          const playerPlayedInMonth = new Set();
+          if (tournament.matches) {
+            tournament.matches.forEach(m => {
+              const sA = parseInt(m.scoreA, 10), sB = parseInt(m.scoreB, 10);
+              const excluded = m.excludedStatsPlayers || [];
+              (m.teamA || []).forEach(id => { if (id) playerPlayedInMonth.add(id); });
+              (m.teamB || []).forEach(id => { if (id) playerPlayedInMonth.add(id); });
+
+              if (!isNaN(sA) && !isNaN(sB)) {
+                (m.teamA || []).forEach(id => { if (id && statsMap[id] && !excluded.includes(id)) { statsMap[id].played += 1; statsMap[id].ptsWon += sA; statsMap[id].ptsLost += sB; if (sA > sB) statsMap[id].wins += 1; else if (sB > sA) statsMap[id].losses += 1; } });
+                (m.teamB || []).forEach(id => { if (id && statsMap[id] && !excluded.includes(id)) { statsMap[id].played += 1; statsMap[id].ptsWon += sB; statsMap[id].ptsLost += sA; if (sB > sA) statsMap[id].wins += 1; else if (sA > sB) statsMap[id].losses += 1; } });
+              }
+            });
+          }
+
+          // 해당 월례대회 참여 수 집계 (경기에 참여했거나 불참자가 아니었던 경우)
+          const isAbsentArr = Array.isArray(tournament.absentPlayers) ? tournament.absentPlayers : [];
+          const hasMatches = tournament.matches && tournament.matches.length > 0;
+          ParticipantManager.list.forEach(p => {
+            if (statsMap[p.id]) {
+              if (playerPlayedInMonth.has(p.id) || (hasMatches && !isAbsentArr.includes(p.id))) {
+                statsMap[p.id].tournamentCount += 1;
+              }
             }
           });
         });
@@ -2199,7 +2462,7 @@
         });
         const tbody = document.getElementById('statsTableBody'); if (!tbody) return;
         const stats = this.calculateStats();
-        if (stats.length === 0) { tbody.innerHTML = `<tr><td colspan="10" class="empty-state"><i class="ph ph-chart-bar"></i><p>등록된 참가자가 없습니다.</p></td></tr>`; return; }
+        if (stats.length === 0) { tbody.innerHTML = `<tr><td colspan="11" class="empty-state"><i class="ph ph-chart-bar"></i><p>등록된 참가자가 없습니다.</p></td></tr>`; return; }
         tbody.innerHTML = stats.map((st, index) => {
           let rankBadgeClass = 'rank-badge';
           if (index === 0) rankBadgeClass += ' rank-1'; else if (index === 1) rankBadgeClass += ' rank-2'; else if (index === 2) rankBadgeClass += ' rank-3';
@@ -2210,6 +2473,7 @@
             <tr>
               <td style="text-align: center;"><span class="${rankBadgeClass}">${index + 1}</span></td>
               <td><strong>${st.name}</strong> ${genderBadge}</td>
+              <td style="text-align: center; font-weight: 800; color: var(--vivid-yellow);">${st.tournamentCount}</td>
               <td style="text-align: center; font-weight: 800;">${st.played}</td>
               <td style="text-align: center; color: var(--vivid-yellow); font-weight: 800;">${st.wins}</td>
               <td style="text-align: center; color: var(--text-muted);">${st.losses}</td>
@@ -2225,6 +2489,7 @@
         const stats = this.calculateStats(); if (stats.length === 0) { Toast.show('내보낼 통계 데이터가 없습니다.', 'error'); return; }
         const excelData = stats.map((st, index) => ({
           '순위': index + 1, '이름': st.name, '성별': st.gender === 'M' ? '남성' : '여성',
+          '참여 수': st.tournamentCount,
           '총 경기 수': st.played, '승': st.wins, '패': st.losses, '승률 (%)': Number(st.winRate.toFixed(1)),
           '총 득점': st.ptsWon, '총 실점': st.ptsLost, '득실차': st.ptsDiff
         }));
@@ -2242,6 +2507,7 @@
       activeMonth: '3월', monthList: ['3월'],
       tournaments: { '3월': { currentRound: 0, matches: [], pairingHistory: [], absentPlayers: [], matchMode: 'regular' } },
       selectedStatsMonths: ['3월'],
+      localUpdatedAt: 0,
 
       init() {
         this.bindNavigation();
@@ -2271,7 +2537,11 @@
           google.script.run.withSuccessHandler(cloudData => {
             if (cloudData) {
               this.applyLoadedData(cloudData);
-              try { localStorage.setItem(this.STORAGE_KEY, JSON.stringify(cloudData)); } catch (e) {}
+              this.localUpdatedAt = cloudData.updatedAt || Date.now();
+              try {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(cloudData));
+                localStorage.setItem('BEST_TENNIS_UPDATED_AT', String(this.localUpdatedAt));
+              } catch (e) {}
               this.updateCloudStatus('클라우드 동기화 완료');
             } else {
               this.loadStateFromLocalStorage();
@@ -2298,8 +2568,21 @@
         if (typeof google !== 'undefined' && google.script && google.script.run) {
           google.script.run.withSuccessHandler(cloudData => {
             if (cloudData) {
+              const localTime = this.localUpdatedAt || parseInt(localStorage.getItem('BEST_TENNIS_UPDATED_AT') || '0', 10);
+              const cloudTime = cloudData.updatedAt || 0;
+              if (localTime > 0 && cloudTime > 0 && localTime > (cloudTime + 1000)) {
+                console.log(`🛡️ 타임스탬프 보호 작동: 로컬(${localTime}) > 클라우드(${cloudTime})`);
+                this.updateCloudStatus('클라우드 동기화 완료 (로컬 최신 유지)');
+                if (showToast) Toast.show('🛡️ 현재 기기에 더 최신 수정 데이터가 있어 덮어쓰지 않고 안전하게 보호했습니다.');
+                this.saveState();
+                return;
+              }
               this.applyLoadedData(cloudData);
-              try { localStorage.setItem(this.STORAGE_KEY, JSON.stringify(cloudData)); } catch (e) {}
+              this.localUpdatedAt = cloudTime || Date.now();
+              try {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(cloudData));
+                localStorage.setItem('BEST_TENNIS_UPDATED_AT', String(this.localUpdatedAt));
+              } catch (e) {}
               this.renderAllViews();
               this.updateCloudStatus('클라우드 동기화 완료');
               if (showToast) Toast.show('☁️ 최신 데이터를 구글 클라우드에서 불러왔습니다!');
@@ -2316,8 +2599,26 @@
             if (res.ok) {
               const cloudData = await res.json();
               if (cloudData && (cloudData.tournaments || cloudData.participants)) {
+                const localTime = this.localUpdatedAt || parseInt(localStorage.getItem('BEST_TENNIS_UPDATED_AT') || '0', 10);
+                const cloudTime = cloudData.updatedAt || 0;
+
+                // 🛡️ 타임스탬프 보호: 현재 로컬 데이터가 클라우드보다 최신인 경우
+                if (localTime > 0 && cloudTime > 0 && localTime > (cloudTime + 1000)) {
+                  console.log(`🛡️ 타임스탬프 보호: 로컬(${localTime}) > 클라우드(${cloudTime})`);
+                  this.updateCloudStatus('클라우드 동기화 완료 (로컬 최신 유지)');
+                  if (showToast) {
+                    Toast.show('🛡️ 현재 기기에 더 최신 수정 데이터가 있어 덮어쓰지 않고 안전하게 보호했습니다.');
+                  }
+                  this.saveState();
+                  return;
+                }
+
                 this.applyLoadedData(cloudData);
-                try { localStorage.setItem(this.STORAGE_KEY, JSON.stringify(cloudData)); } catch (e) {}
+                this.localUpdatedAt = cloudTime || Date.now();
+                try {
+                  localStorage.setItem(this.STORAGE_KEY, JSON.stringify(cloudData));
+                  localStorage.setItem('BEST_TENNIS_UPDATED_AT', String(this.localUpdatedAt));
+                } catch (e) {}
                 this.renderAllViews();
                 this.updateCloudStatus('클라우드 동기화 완료');
                 if (showToast) Toast.show('☁️ 최신 데이터를 클라우드에서 성공적으로 불러왔습니다!');
@@ -2337,7 +2638,9 @@
       loadStateFromLocalStorage() {
         try {
           const raw = localStorage.getItem(this.STORAGE_KEY); if (!raw) return;
-          const data = JSON.parse(raw); this.applyLoadedData(data);
+          const data = JSON.parse(raw);
+          this.applyLoadedData(data);
+          this.localUpdatedAt = data.updatedAt || parseInt(localStorage.getItem('BEST_TENNIS_UPDATED_AT') || '0', 10);
         } catch (e) { console.error('LocalStorage load error:', e); }
       },
 
@@ -2361,9 +2664,14 @@
 
       saveState() {
         MatchingManager.saveCurrentMonthData();
+        const now = Date.now();
+        this.localUpdatedAt = now;
+        try { localStorage.setItem('BEST_TENNIS_UPDATED_AT', String(now)); } catch (e) {}
+
         const payload = {
           participants: ParticipantManager.list, activeMonth: this.activeMonth,
-          monthList: this.monthList, tournaments: this.tournaments
+          monthList: this.monthList, tournaments: this.tournaments,
+          updatedAt: now
         };
         const jsonStr = JSON.stringify(payload);
         try { localStorage.setItem(this.STORAGE_KEY, jsonStr); } catch (e) {}
