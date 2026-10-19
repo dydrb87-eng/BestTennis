@@ -685,7 +685,7 @@
       <div class="glass-panel">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
           <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--vivid-yellow);">
-            <i class="ph ph-ranking"></i> <span id="currentMonthStatsTitle">월례대회</span> 통계
+            <i class="ph ph-ranking"></i> 통계
           </h2>
           <span style="color: var(--text-muted); font-size: 0.9rem;">
             * 순위 기준: 승률 > 득실차 > 다승 > 최소 패배
@@ -694,7 +694,7 @@
 
         <div class="month-filter-panel">
           <span style="font-weight: 800; color: var(--vivid-yellow); font-size: 1.05rem;">
-            <i class="ph ph-funnel"></i> 통계:
+            <i class="ph ph-funnel"></i> 월별 통계:
           </span>
           <div id="viewerStatsMonthCheckboxes" class="month-checkboxes-group"></div>
         </div>
@@ -1002,13 +1002,6 @@
 
       renderLeaderboard() {
         this.renderStatsMonthCheckboxes();
-
-        const titleEl = document.getElementById('currentMonthStatsTitle');
-        if (titleEl) {
-          titleEl.textContent = this.selectedStatsMonths.length > 0
-            ? this.selectedStatsMonths.join(', ')
-            : '월례대회';
-        }
 
         const tbody = document.getElementById('leaderboardTableBody');
         if (!tbody) return;
