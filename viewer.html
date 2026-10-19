@@ -276,6 +276,60 @@
       box-shadow: 0 0 12px rgba(255, 255, 0, 0.4);
     }
 
+    /* Month Checkbox Filter for Stats */
+    .month-filter-panel {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .month-checkboxes-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .month-checkbox-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      color: var(--text-muted);
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .month-checkbox-item:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: var(--text-main);
+    }
+
+    .month-checkbox-item.checked {
+      background: rgba(0, 176, 39, 0.25);
+      border-color: var(--vivid-green);
+      color: var(--text-main);
+      box-shadow: 0 0 10px rgba(0, 176, 39, 0.3);
+    }
+
+    .month-checkbox-item input[type="checkbox"] {
+      accent-color: var(--vivid-green);
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
     /* Match Cards */
     .matches-list {
       display: flex;
@@ -594,22 +648,19 @@
         <button class="tab-btn" data-tab="tab-leaderboard">
           <i class="ph ph-trophy"></i> 통계
         </button>
-        <button class="tab-btn" data-tab="tab-attendees">
-          <i class="ph ph-users-three"></i> 출전 현황 (<span id="attendeeTabCount">0</span>명)
-        </button>
       </nav>
     </header>
 
-    <!-- Month Selector Bar -->
-    <div class="month-bar">
-      <span style="font-weight: 800; color: var(--vivid-yellow); font-size: 1.05rem;">
-        <i class="ph ph-calendar"></i> 월례대회 선택:
-      </span>
-      <div id="monthPills" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
-    </div>
-
     <!-- TAB 1: Live Matches -->
     <main id="tab-matches" class="tab-pane active">
+      <!-- Month Selector Bar -->
+      <div class="month-bar">
+        <span style="font-weight: 800; color: var(--vivid-yellow); font-size: 1.05rem;">
+          <i class="ph ph-calendar"></i> 월례대회 선택:
+        </span>
+        <div id="monthPills" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+      </div>
+
       <div class="glass-panel">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
           <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--vivid-yellow);">
@@ -641,6 +692,13 @@
           </span>
         </div>
 
+        <div class="month-filter-panel">
+          <span style="font-weight: 800; color: var(--vivid-yellow); font-size: 1.05rem;">
+            <i class="ph ph-funnel"></i> 통계:
+          </span>
+          <div id="viewerStatsMonthCheckboxes" class="month-checkboxes-group"></div>
+        </div>
+
         <div style="overflow-x: auto;">
           <table class="custom-table" id="leaderboardTable">
             <thead>
@@ -664,27 +722,6 @@
         </div>
       </div>
     </section>
-
-    <!-- TAB 3: Attendees -->
-    <section id="tab-attendees" class="tab-pane">
-      <div class="glass-panel">
-        <h2 style="font-size: 1.35rem; font-weight: 800; color: var(--vivid-yellow); margin-bottom: 12px;">
-          <i class="ph ph-user-check"></i> 오늘 출전 선수 및 출전 경기 수
-        </h2>
-        <div id="attendingPlayersContainer" class="attending-grid">
-          <!-- Injected by JS -->
-        </div>
-
-        <div id="absentSection" style="margin-top: 24px; padding-top: 20px; border-top: 1px dashed rgba(255, 255, 255, 0.2);">
-          <h3 style="font-size: 1.15rem; font-weight: 800; color: #f87171; margin-bottom: 12px;">
-            <i class="ph ph-user-minus"></i> 불참 회원 명단
-          </h3>
-          <div id="absentPlayersContainer" class="attending-grid">
-            <!-- Injected by JS -->
-          </div>
-        </div>
-      </div>
-    </section>
   </div>
 
   <script>
@@ -694,6 +731,8 @@
       
       activeMonth: '3월',
       monthList: ['3월'],
+      selectedStatsMonths: ['3월'],
+      hasUserCustomizedStatsMonths: false,
       tournaments: {},
       participants: [],
       
@@ -799,6 +838,17 @@
           this.activeMonth = this.monthList[this.monthList.length - 1];
         }
         if (data.tournaments) this.tournaments = data.tournaments;
+
+        if (!this.hasUserCustomizedStatsMonths) {
+          if (Array.isArray(data.selectedStatsMonths) && data.selectedStatsMonths.length > 0) {
+            const valid = data.selectedStatsMonths.filter(m => this.monthList.includes(m));
+            this.selectedStatsMonths = valid.length > 0 ? valid : [...this.monthList];
+          } else {
+            this.selectedStatsMonths = [...this.monthList];
+          }
+        } else {
+          this.selectedStatsMonths = this.selectedStatsMonths.filter(m => this.monthList.includes(m));
+        }
       },
 
       switchMonth(month) {
@@ -810,7 +860,6 @@
         this.renderMonthPills();
         this.renderMatches();
         this.renderLeaderboard();
-        this.renderAttendees();
       },
 
       renderMonthPills() {
@@ -820,6 +869,37 @@
           const isActive = m === this.activeMonth;
           return `<button class="month-pill ${isActive ? 'active' : ''}" onclick="ViewerApp.switchMonth('${m}')">${m}</button>`;
         }).join('');
+      },
+
+      renderStatsMonthCheckboxes() {
+        const container = document.getElementById('viewerStatsMonthCheckboxes');
+        if (!container) return;
+        if (!this.monthList || this.monthList.length === 0) {
+          container.innerHTML = `<span style="color: var(--text-muted); font-size: 0.95rem;">등록된 월례대회가 없습니다.</span>`;
+          return;
+        }
+        container.innerHTML = this.monthList.map(m => {
+          const isChecked = this.selectedStatsMonths.includes(m);
+          return `
+            <label class="month-checkbox-item ${isChecked ? 'checked' : ''}">
+              <input type="checkbox" value="${m}" ${isChecked ? 'checked' : ''} onchange="ViewerApp.toggleStatsMonth('${m}', this.checked)">
+              <span>${m}</span>
+            </label>
+          `;
+        }).join('');
+      },
+
+      toggleStatsMonth(monthName, isChecked) {
+        this.hasUserCustomizedStatsMonths = true;
+        if (isChecked) {
+          if (!this.selectedStatsMonths.includes(monthName)) {
+            this.selectedStatsMonths.push(monthName);
+            this.selectedStatsMonths.sort((a, b) => parseInt(a) - parseInt(b));
+          }
+        } else {
+          this.selectedStatsMonths = this.selectedStatsMonths.filter(m => m !== monthName);
+        }
+        this.renderLeaderboard();
       },
 
       renderMatches() {
@@ -921,16 +1001,24 @@
       },
 
       renderLeaderboard() {
+        this.renderStatsMonthCheckboxes();
+
         const titleEl = document.getElementById('currentMonthStatsTitle');
-        if (titleEl) titleEl.textContent = this.activeMonth;
+        if (titleEl) {
+          titleEl.textContent = this.selectedStatsMonths.length > 0
+            ? this.selectedStatsMonths.join(', ')
+            : '월례대회';
+        }
 
         const tbody = document.getElementById('leaderboardTableBody');
         if (!tbody) return;
 
-        const currentT = this.tournaments[this.activeMonth] || { matches: [] };
-        const matches = currentT.matches || [];
+        if (this.selectedStatsMonths.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="10" style="padding: 30px; color: var(--text-muted);">통계를 조회할 월례대회를 위에서 체크해 주세요.</td></tr>`;
+          return;
+        }
 
-        // 선수별 통계 계산
+        // 선수별 통계 초기화
         const stats = {};
         this.participants.forEach(p => {
           stats[p.id] = {
@@ -948,18 +1036,50 @@
           };
         });
 
-        // 월례대회 참여 수 집계 (출전했거나 참석 명단에 포함된 경우)
-        this.monthList.forEach(mName => {
-          const tournament = this.tournaments[mName]; if (!tournament) return;
+        let totalMatchesCount = 0;
+
+        // 선택된 월(체크된 월)을 순회하며 월례대회 참여 수 및 경기 성적 합산
+        this.selectedStatsMonths.forEach(mName => {
+          const tournament = this.tournaments[mName];
+          if (!tournament) return;
+
+          const matches = tournament.matches || [];
+          totalMatchesCount += matches.length;
+
           const playerPlayedInMonth = new Set();
-          if (tournament.matches) {
-            tournament.matches.forEach(m => {
-              (m.teamA || []).forEach(id => { if (id) playerPlayedInMonth.add(id); });
-              (m.teamB || []).forEach(id => { if (id) playerPlayedInMonth.add(id); });
-            });
-          }
+          matches.forEach(m => {
+            (m.teamA || []).forEach(id => { if (id) playerPlayedInMonth.add(id); });
+            (m.teamB || []).forEach(id => { if (id) playerPlayedInMonth.add(id); });
+
+            const sA = parseInt(m.scoreA, 10), sB = parseInt(m.scoreB, 10);
+            if (isNaN(sA) || isNaN(sB)) return;
+
+            const excluded = m.excludedStatsPlayers || [];
+            const updateTeam = (teamArr, ptsW, ptsL, isWin) => {
+              (teamArr || []).forEach(pId => {
+                if (!pId || excluded.includes(pId) || !stats[pId]) return;
+                const s = stats[pId];
+                s.played++;
+                if (isWin) s.wins++; else s.losses++;
+                s.ptsWon += ptsW;
+                s.ptsLost += ptsL;
+                s.ptsDiff = s.ptsWon - s.ptsLost;
+                s.winRate = s.played > 0 ? (s.wins / s.played) * 100 : 0;
+              });
+            };
+
+            if (sA > sB) {
+              updateTeam(m.teamA, sA, sB, true);
+              updateTeam(m.teamB, sB, sA, false);
+            } else if (sB > sA) {
+              updateTeam(m.teamA, sA, sB, false);
+              updateTeam(m.teamB, sB, sA, true);
+            }
+          });
+
+          // 월례대회 참여 수 집계 (해당 월에 경기를 뛰었거나 참석 명단에 포함된 경우 월당 +1)
           const isAbsentArr = Array.isArray(tournament.absentPlayers) ? tournament.absentPlayers : [];
-          const hasMatches = tournament.matches && tournament.matches.length > 0;
+          const hasMatches = matches.length > 0;
           this.participants.forEach(p => {
             if (stats[p.id]) {
               if (playerPlayedInMonth.has(p.id) || (hasMatches && !isAbsentArr.includes(p.id))) {
@@ -969,35 +1089,7 @@
           });
         });
 
-        matches.forEach(m => {
-          const sA = parseInt(m.scoreA, 10), sB = parseInt(m.scoreB, 10);
-          if (isNaN(sA) || isNaN(sB)) return;
-
-          const excluded = m.excludedStatsPlayers || [];
-
-          const updateTeam = (teamArr, ptsW, ptsL, isWin) => {
-            teamArr.forEach(pId => {
-              if (!pId || excluded.includes(pId) || !stats[pId]) return;
-              const s = stats[pId];
-              s.played++;
-              if (isWin) s.wins++; else s.losses++;
-              s.ptsWon += ptsW;
-              s.ptsLost += ptsL;
-              s.ptsDiff = s.ptsWon - s.ptsLost;
-              s.winRate = s.played > 0 ? (s.wins / s.played) * 100 : 0;
-            });
-          };
-
-          if (sA > sB) {
-            updateTeam(m.teamA, sA, sB, true);
-            updateTeam(m.teamB, sB, sA, false);
-          } else if (sB > sA) {
-            updateTeam(m.teamA, sA, sB, false);
-            updateTeam(m.teamB, sB, sA, true);
-          }
-        });
-
-        // 1경기 이상 출전한 선수만 랭킹에 표시 (0경기는 하단 정렬)
+        // 1경기 이상 출전한 선수만 랭킹 상단에 표시 (0경기는 하단 정렬)
         const statList = Object.values(stats);
         statList.sort((a, b) => {
           if (b.played === 0 && a.played > 0) return -1;
@@ -1008,8 +1100,8 @@
           return a.losses - b.losses;
         });
 
-        if (statList.length === 0 || matches.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="10" style="padding: 30px; color: var(--text-muted);">진행된 경기 결과가 없습니다.</td></tr>`;
+        if (statList.length === 0 || totalMatchesCount === 0) {
+          tbody.innerHTML = `<tr><td colspan="10" style="padding: 30px; color: var(--text-muted);">선택한 월에 진행된 경기 결과가 없습니다.</td></tr>`;
           return;
         }
 
@@ -1039,62 +1131,6 @@
             </tr>
           `;
         }).join('');
-      },
-
-      renderAttendees() {
-        const currentT = this.tournaments[this.activeMonth] || { matches: [], absentPlayers: [] };
-        const absentSet = new Set(currentT.absentPlayers || []);
-
-        const attending = this.participants.filter(p => !absentSet.has(p.id));
-        const absent = this.participants.filter(p => absentSet.has(p.id));
-
-        const tabCount = document.getElementById('attendeeTabCount');
-        if (tabCount) tabCount.textContent = attending.length;
-
-        // 출전 경기 수 계산
-        const playedCounts = {};
-        (currentT.matches || []).forEach(m => {
-          [...(m.teamA || []), ...(m.teamB || [])].forEach(id => {
-            if (id) playedCounts[id] = (playedCounts[id] || 0) + 1;
-          });
-        });
-
-        const attendContainer = document.getElementById('attendingPlayersContainer');
-        if (attendContainer) {
-          if (attending.length === 0) {
-            attendContainer.innerHTML = `<p style="color:var(--text-muted);">참석자 데이터가 없습니다.</p>`;
-          } else {
-            attendContainer.innerHTML = attending.map(p => {
-              const count = playedCounts[p.id] || 0;
-              const gBadge = p.gender === 'F' ? '<span class="badge-gender badge-f">여</span>' : '<span class="badge-gender badge-m">남</span>';
-              return `
-                <div class="attend-card">
-                  <span style="font-weight:700; font-size:1.05rem;">${p.name} ${gBadge}</span>
-                  <span class="attend-count-badge">${count}경기 출전</span>
-                </div>
-              `;
-            }).join('');
-          }
-        }
-
-        const absentContainer = document.getElementById('absentPlayersContainer');
-        const absentSection = document.getElementById('absentSection');
-        if (absentContainer && absentSection) {
-          if (absent.length === 0) {
-            absentSection.style.display = 'none';
-          } else {
-            absentSection.style.display = 'block';
-            absentContainer.innerHTML = absent.map(p => {
-              const gBadge = p.gender === 'F' ? '<span class="badge-gender badge-f">여</span>' : '<span class="badge-gender badge-m">남</span>';
-              return `
-                <div class="attend-card" style="opacity: 0.7; border-color: rgba(255, 100, 100, 0.3);">
-                  <span style="font-weight:700;">${p.name} ${gBadge}</span>
-                  <span style="font-size:0.85rem; color:#f87171; font-weight:700;">불참</span>
-                </div>
-              `;
-            }).join('');
-          }
-        }
       }
     };
 
